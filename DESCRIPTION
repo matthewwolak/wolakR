@@ -1,0 +1,9 @@
+Package: wolakR
+Title: Handy Tools that Save Me Time
+Version: 0.0.0.9000
+Authors@R: person("Matthew", "Wolak", email = "matthewwolak@gmail.com", role = c("aut", "cre"))
+Description: A random assortment of functions and data that I use often.
+Depends: R (>= 3.3.1)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
