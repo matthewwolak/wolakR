@@ -27,8 +27,8 @@
 #' postTable(normMCMC)
 postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
   if(!is.null(ind)) mcpost <- mcpost[, ind]
-  hpdint <- signif(HPDinterval(mcpost), sigdig)
-  postmode <- signif(posterior.mode(mcpost), sigdig)
+  hpdint <- signif(coda::HPDinterval(mcpost), sigdig)
+  postmode <- signif(MCMCglmm::posterior.mode(mcpost), sigdig)
   postmean <- signif(if(length(postmode)==1) mean(mcpost) else apply(mcpost, MARGIN = 2, FUN = mean), sigdig)
   compnames <- if(is.null(colnames(mcpost))) names(mcpost) else colnames(mcpost)
     if(is.null(compnames)) compnames <- "V1"
