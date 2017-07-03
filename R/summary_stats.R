@@ -5,6 +5,7 @@
 #' females are the larger sex or negative when males are the larger sex.
 #'
 #' @aliases SDI
+#' @export
 #' @param t Character object naming a trait in \code{dfin}.
 #' @param dfin Data frame which must contain at least three columns: one
 #'   containing trait names that match \code{t}, a column with female
