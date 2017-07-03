@@ -22,7 +22,7 @@
 #' # Simulate to example MCMC chains:
 #' ## Both are standard normal distributions of only positive values
 #' ## However, one is on the boundary (near zero) while the other is not
-#' normMCMC <- as.mcmc(matrix(c(abs(rnorm(1000, 0.2, 1)), rnorm(1000, 10, 1)),
+#' normMCMC <- coda::mcmc(matrix(c(abs(rnorm(1000, 0.2, 1)), rnorm(1000, 10, 1)),
 #'	ncol = 2))
 #' postTable(normMCMC)
 postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
