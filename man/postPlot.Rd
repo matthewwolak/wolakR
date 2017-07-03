@@ -72,6 +72,8 @@ par(mfrow = c(2, 1))
 }
 \seealso{
 \code{\link[coda]{densplot}}, \code{\link[graphics]{hist}}
+
+Other MCMC posterior distribution helper functions: \code{\link{postTable}}
 }
 \author{
 \email{matthewwolak@gmail.com}

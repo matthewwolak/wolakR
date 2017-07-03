@@ -18,6 +18,7 @@
 #'   a comma, followed by the lower and upper limits of the highest posterior
 #'   density, enclosed in parentheses.
 #' @author \email{matthewwolak@@gmail.com}
+#' @family MCMC posterior distribution helper functions
 #' @examples
 #' # Simulate to example MCMC chains:
 #' ## Both are standard normal distributions of only positive values
@@ -85,6 +86,7 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'   \emph{and} \code{abline}.
 #' @author \email{matthewwolak@@gmail.com}
 #' @seealso \code{\link[coda]{densplot}}, \code{\link[graphics]{hist}}
+#' @family MCMC posterior distribution helper functions
 #' @examples
 #' # Simulate to example MCMC chains:
 #' ## Both are standard normal distributions of only positive values

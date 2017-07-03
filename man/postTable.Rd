@@ -37,6 +37,9 @@ normMCMC <- coda::mcmc(matrix(c(abs(rnorm(1000, 0.2, 1)), rnorm(1000, 10, 1)),
 ncol = 2))
 postTable(normMCMC)
 }
+\seealso{
+Other MCMC posterior distribution helper functions: \code{\link{postPlot}}
+}
 \author{
 \email{matthewwolak@gmail.com}
 }
