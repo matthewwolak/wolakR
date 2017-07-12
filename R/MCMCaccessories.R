@@ -48,6 +48,19 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' Pretty plot of a posterior distribution, including summary statistics such as the
 #' posterior mean and credible interval.
 #'
+#' To plot a prior distribution, \code{prior} should either specify an object of
+#'   class \code{\link[coda]{mcmc}} that contains a simulated prior distribution
+#'   or it should contain a \code{list} with the prior specification according
+#'   to the instructions for specifying G-structure priors in
+#'   \code{\link[MCMCglmm]{MCMCglmm}}.
+#'
+#' Add more about prior plotting, specifically how parameter expanded priors are
+#'   simulated versus inverse-Wishart/Gamma are derived straight from their
+#'   distribution functions. Further, add how to specify which marginal component
+#'   to plot, how to specify `n` samples, fix in residual covariance matrices,
+#'   and what about fixed effects? Also, note how density is calculated
+#'   after 'trimming' to range of the posterior samples.
+#'
 #' @section Warning:
 #' The use of the \dots argument is untested. Arguments of the same name that
 #' are shared among \code{densplot}, \code{hist}, or \code{abline} will affect
@@ -62,15 +75,19 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' @param plotHist Should a histogram of the density be plotted as well.
 #' @param histbreaks If \code{plotHist = TRUE}, then the number of breaks. See
 #'   \code{\link[graphics]{hist}} for details.
-#' @param denslwd,hpdlwd,meanlwd The line widths for the lines to be plotted
+#' @param prior Should a line be added representing the prior distribution. If
+#'   \code{NULL} (the default) then no line is added. A prior is plotted if
+#'   either a \code{\link[coda]{mcmc}} object or prior specification is supplied
+#'   (see Details).
+#' @param denslwd,hpdlwd,meanlwd,priorlwd The line widths for the lines to be plotted
 #'   representing the kernel density estimate (\code{denslwd}), credible
 #'   interval limits (\code{hpdlwd}), or posterior mean (\code{meanlwd}). See
 #'   \code{\link[graphics]{par}} for details. 
-#' @param denslty,hpdlty,meanlty The line type for the lines to be plotted
+#' @param denslty,hpdlty,meanlty,priorlty The line type for the lines to be plotted
 #'   representing the kernel density estimate (\code{denslty}), credible
 #'   interval limits (\code{hpdlty}), or posterior mean (\code{meanlty}). See
 #'   \code{\link[graphics]{par}} for details. 
-#' @param denscol,hpdcol,meancol The line colors for the lines to be plotted
+#' @param denscol,hpdcol,meancol,priorcol The line colors for the lines to be plotted
 #'   representing the kernel density estimate (\code{denscol}), credible
 #'   interval limits (\code{hpdcol}), or posterior mean (\code{meancol}). See
 #'   \code{\link[graphics]{par}} for details.
@@ -97,9 +114,11 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'   postPlot(normMCMC[, 1], ylim = c(0, 1))
 #'   postPlot(normMCMC[, 2], ylim = c(0, 1))
 postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
+	prior = NULL,
 	denslwd = 6, denslty = "solid", denscol = "black",
 	hpdlwd = 6, hpdlty = "dashed", hpdcol = "black",
 	meanlwd = 7, meanlty = "12", meancol = "red",
+	priorlwd = 4, priorlty = "solid", priorcol = "green",
 	ylim,
 	at1 = NULL, at2 = NULL,
 	labels1 = NULL, labels2 = NULL, ...){
@@ -122,5 +141,49 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 	col = meancol, lty = meanlty, lwd = meanlwd, ...)
   axis(1, at = at1, labels = labels1)
   axis(2, at = at2, labels = labels2)
+
+  #######
+  # Prior
+  #######
+  if(!is.null(prior)){
+    if(coda::is.mcmc(prior)){
+      #TODO add some sort of bandwith more to max(posterior)
+      ## but stop density there. This will keep it from dropping down to zero
+      ## Also,
+      pr <- range(posterior)
+      if(pr[1L] > 0 && pr[1L] < 1){
+        prDens <- stats::density(prior[which(prior >= pr[1L] & prior <= pr[2L])],
+	  from = 0)
+      } else{
+          prDens <- stats::density(prior[which(prior >= pr[1L] & prior <= pr[2L])])
+        }
+    }
+    if(is.list(prior)){
+      stop("prior as a list is not yet implemented. Supply a `mcmc` object") #TODO
+      if(!is.matrix(V)) V <- as.matrix(V)
+      rc <- nrow(V)
+      if(nrow(V) != ncol(V)) stop("V must be a square symmetric matrix")
+      if(!all(diag(V) > 0)){
+        stop("V is not positive definite (V has 0 or negative diagonal values)")
+      } 
+      #TODO add check of V for positive definiteness
+      ## could use `MCMCglmm:::is.positive.definite()` or `eigen()`
+
+      if(is.null(alpha.mu) && is.null(alpha.V)){
+        stop("Need to add how to do non-parameter expanded priors")  #TODO
+      }
+    }
+    if(!coda::is.mcmc(prior) && !is.list(prior)){
+      warning("prior is not a `list` or `mcmc` object - no prior added to plot")
+    }
+
+    # Add prior density to plot
+    graphics::lines(prDens,
+	col = priorcol, lty = priorlty, lwd = priorlwd, ...)
+  }
+ 
+
 }
+
+
 
