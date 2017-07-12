@@ -118,7 +118,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 	denslwd = 6, denslty = "solid", denscol = "black",
 	hpdlwd = 6, hpdlty = "dashed", hpdcol = "black",
 	meanlwd = 7, meanlty = "12", meancol = "red",
-	priorlwd = 4, priorlty = "solid", priorcol = "green",
+	priorlwd = 3, priorlty = "solid", priorcol = "green",
 	ylim,
 	at1 = NULL, at2 = NULL,
 	labels1 = NULL, labels2 = NULL, ...){
