@@ -4,10 +4,11 @@
 \alias{postPlot}
 \title{Posterior distribution plot.}
 \usage{
-postPlot(posterior, plotHist = TRUE, histbreaks = 100, denslwd = 6,
-  denslty = "solid", denscol = "black", hpdlwd = 6, hpdlty = "dashed",
-  hpdcol = "black", meanlwd = 7, meanlty = "12", meancol = "red", ylim,
-  at1 = NULL, at2 = NULL, labels1 = NULL, labels2 = NULL, ...)
+postPlot(posterior, plotHist = TRUE, histbreaks = 100, prior = NULL,
+  denslwd = 6, denslty = "solid", denscol = "black", hpdlwd = 6,
+  hpdlty = "dashed", hpdcol = "black", meanlwd = 7, meanlty = "12",
+  meancol = "red", priorlwd = 4, priorlty = "solid", priorcol = "green",
+  ylim, at1 = NULL, at2 = NULL, labels1 = NULL, labels2 = NULL, ...)
 }
 \arguments{
 \item{posterior}{Object containing a marginal posterior distribution from
@@ -19,17 +20,22 @@ from which kernel density estimates can be calulated by the
 \item{histbreaks}{If \code{plotHist = TRUE}, then the number of breaks. See
 \code{\link[graphics]{hist}} for details.}
 
-\item{denslwd, hpdlwd, meanlwd}{The line widths for the lines to be plotted
+\item{prior}{Should a line be added representing the prior distribution. If
+\code{NULL} (the default) then no line is added. A prior is plotted if
+either a \code{\link[coda]{mcmc}} object or prior specification is supplied
+(see Details).}
+
+\item{denslwd, hpdlwd, meanlwd, priorlwd}{The line widths for the lines to be plotted
 representing the kernel density estimate (\code{denslwd}), credible
 interval limits (\code{hpdlwd}), or posterior mean (\code{meanlwd}). See
 \code{\link[graphics]{par}} for details.}
 
-\item{denslty, hpdlty, meanlty}{The line type for the lines to be plotted
+\item{denslty, hpdlty, meanlty, priorlty}{The line type for the lines to be plotted
 representing the kernel density estimate (\code{denslty}), credible
 interval limits (\code{hpdlty}), or posterior mean (\code{meanlty}). See
 \code{\link[graphics]{par}} for details.}
 
-\item{denscol, hpdcol, meancol}{The line colors for the lines to be plotted
+\item{denscol, hpdcol, meancol, priorcol}{The line colors for the lines to be plotted
 representing the kernel density estimate (\code{denscol}), credible
 interval limits (\code{hpdcol}), or posterior mean (\code{meancol}). See
 \code{\link[graphics]{par}} for details.}
@@ -51,6 +57,20 @@ x-axis (\code{labels1}) and and y-axis (\code{labels2}). See
 \description{
 Pretty plot of a posterior distribution, including summary statistics such as the
 posterior mean and credible interval.
+}
+\details{
+To plot a prior distribution, \code{prior} should either specify an object of
+  class \code{\link[coda]{mcmc}} that contains a simulated prior distribution
+  or it should contain a \code{list} with the prior specification according
+  to the instructions for specifying G-structure priors in
+  \code{\link[MCMCglmm]{MCMCglmm}}.
+
+Add more about prior plotting, specifically how parameter expanded priors are
+  simulated versus inverse-Wishart/Gamma are derived straight from their
+  distribution functions. Further, add how to specify which marginal component
+  to plot, how to specify `n` samples, fix in residual covariance matrices,
+  and what about fixed effects? Also, note how density is calculated
+  after 'trimming' to range of the posterior samples.
 }
 \section{Warning}{
 
