@@ -195,7 +195,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
     if(coda::is.mcmc(prior)){
       ## range of prior/posterior
       #TODO argument matching for prange
-      prra <- if(prange == "post") range(posterior) else range(prior)
+      prra <- if(prange == "posterior") range(posterior) else range(prior)
       # General formula for finding bounds
       ## Lower: 2*bound - prior (then select all >= bound)
       ## Upper: 2*bound - prior (then select all <= bound)
@@ -259,7 +259,12 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 	col = priorcol, lty = priorlty, lwd = priorlwd, ...)
   }
  
-
+ return(invisible(list(call = match.call(),
+	postDensity = poDens, priorDensity = prDens,
+	bandwith = bw,
+	histogramOut = histout,
+	constraint = constraint)))
+	
 }
 
 
