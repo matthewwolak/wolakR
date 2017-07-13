@@ -237,6 +237,10 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
         prDens$y <- 3 * prDens$y[prDens$x >= 0 & prDens$x <=1]
         prDens$x <- prDens$x[prDens$x >= 0 & prDens$x <= 1]
       }
+      if(constraint == "upbound1" | constraint == "lobound1"){
+        if(min(prior) >= -1 && 1 + min(prior) < 2 * bw &&
+          max(prior) <= 1 && 1 - max(prior) < 2 * bw) constraint <- "correlation"
+      }
       if(constraint == "correlation"){
         pr <- prior[prior >= -1 & prior <= 1]
         pr <- c(pr, -2 - pr, 2 - pr)
