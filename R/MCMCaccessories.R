@@ -75,10 +75,21 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' @param plotHist Should a histogram of the density be plotted as well.
 #' @param histbreaks If \code{plotHist = TRUE}, then the number of breaks. See
 #'   \code{\link[graphics]{hist}} for details.
+#'
 #' @param prior Should a line be added representing the prior distribution. If
 #'   \code{NULL} (the default) then no line is added. A prior is plotted if
 #'   either a \code{\link[coda]{mcmc}} object or prior specification is supplied
 #'   (see Details).
+#' @param prange Character argument specificing which range
+#'   \code{c("prior", "posterior")} the prior distribution should span.
+#'
+#' @param main Overall title for the plot. See \code{\link[graphics]{plot}} and
+#'   \code{\link[graphics]{title}}.
+#' @param sub Sub-title for the plot. See \code{\link[graphics]{plot}} and
+#'   \code{\link[graphics]{title}}.
+#' @param ylim Y-axis limits to the plotting region, passed to
+#'   \code{\link[coda]{densplot}}. See \code{\link[graphics]{plot.window}}.
+#'
 #' @param denslwd,hpdlwd,meanlwd,priorlwd The line widths for the lines to be plotted
 #'   representing the kernel density estimate (\code{denslwd}), credible
 #'   interval limits (\code{hpdlwd}), or posterior mean (\code{meanlwd}). See
@@ -91,8 +102,6 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'   representing the kernel density estimate (\code{denscol}), credible
 #'   interval limits (\code{hpdcol}), or posterior mean (\code{meancol}). See
 #'   \code{\link[graphics]{par}} for details.
-#' @param ylim Y-axis limits to the plotting region, passed to
-#'   \code{\link[coda]{densplot}}. See \code{\link[graphics]{plot.window}}.
 #' @param at1,at2 The points at which tick-marks are to be drawn on the
 #'   x-axis (\code{at1}) and y-axis (\code{at2}). See
 #'   \code{\link[graphics]{axis}} for details.
@@ -114,25 +123,62 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'   postPlot(normMCMC[, 1], ylim = c(0, 1))
 #'   postPlot(normMCMC[, 2], ylim = c(0, 1))
 postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
-	prior = NULL,
+	prior = NULL, prange = c("prior", "posterior"),
+	main, sub, ylim,
 	denslwd = 6, denslty = "solid", denscol = "black",
 	hpdlwd = 6, hpdlty = "dashed", hpdcol = "black",
 	meanlwd = 7, meanlty = "12", meancol = "red",
 	priorlwd = 3, priorlty = "solid", priorcol = "green",
-	ylim,
 	at1 = NULL, at2 = NULL,
 	labels1 = NULL, labels2 = NULL, ...){
 
+  # bw.nrd() is like `bwf()` in `coda::densplot()` 
+  poDens <- stats::density(posterior, bw = "nrd", kernel = "gaussian", n = 2^13)
+  bw <- poDens$bw
+  main.title <- if(missing(main)) "" else main
+  sub.title <- if(missing(sub)) "" else sub
   if(missing(ylim)){
-    pdens <- stats::density(posterior)$y
     histout <- if(plotHist){
       graphics::hist(posterior, breaks = histbreaks, plot = FALSE)$density
     } else 0
-    ylimit <- c(0, max(c(pdens, histout)))
+    ylimit <- c(0, max(c(poDens$y, histout)))
   } else ylimit <- ylim
 
-  coda::densplot(posterior, show.obs = FALSE, axes = FALSE,
-	ylim = ylimit, lwd = denslwd, ...)
+  # Adjust density at boundaries
+  ## reflect density estimates back across a boundary
+  constraint <- "unbounded"
+  po <- posterior
+  if(max(po) <=1 && 1 - max(po) < 2 * bw){
+    if(min(po) >= 0 && min(po) < 2 * bw){
+      constraint <- "zero-one"
+      po <- c(po, -po, 2 - po)
+    } 
+    if(min(po) < 0 && 1 + min(po) < 2 * bw){
+      constraint <- "correlation"
+      po <- c(po, -2 - po, 2 - po)
+    }      
+  } else{
+      if(min(po) >= 0 && min(po) < 2 * bw){
+        constraint <- "positive"
+        po <- c(po, -po)
+      }
+    }
+  poDens <- stats::density(po, kernel = "gaussian", width = 4 * bw, n = 2^13)
+  if(constraint == "zero-one"){
+    poDens$y <- 3 * poDens$y[poDens$x >= 0 & poDens$x <=1]
+    poDens$x <- poDens$x[poDens$x >= 0 & poDens$x <= 1]
+  }
+  if(constraint == "correlation"){
+    poDens$y <- 3 * poDens$y[poDens$x >= -1 & poDens$x <=1]
+    poDens$x <- poDens$x[poDens$x >= -1 & poDens$x <= 1]
+  }
+  if(constraint == "positive"){
+    poDens$y <- 2 * poDens$y[poDens$x >= 0]
+    poDens$x <- poDens$x[poDens$x >= 0]
+  }
+  plot(poDens, type = "n", axes = FALSE,
+	main = main.title, sub = sub.title, ylim = ylimit, ...)
+  graphics::lines(poDens, lwd = denslwd, ...)
   if(plotHist) graphics::hist(posterior, breaks = histbreaks, freq = FALSE,
 	add = TRUE, ...)
   graphics::abline(v = coda::HPDinterval(posterior),
@@ -147,16 +193,54 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
   #######
   if(!is.null(prior)){
     if(coda::is.mcmc(prior)){
-      #TODO add some sort of bandwith more to max(posterior)
-      ## but stop density there. This will keep it from dropping down to zero
-      ## Also,
-      pr <- range(posterior)
-      if(pr[1L] > 0 && pr[1L] < 1){
-        prDens <- stats::density(prior[which(prior >= pr[1L] & prior <= pr[2L])],
-	  from = 0)
-      } else{
-          prDens <- stats::density(prior[which(prior >= pr[1L] & prior <= pr[2L])])
-        }
+    if(FALSE){
+      ## range of prior/posterior
+      #TODO argument matching for prange
+      prra <- if(prange == "post") range(posterior) else range(prior)
+      # General formula for finding bounds
+      ## Lower: 2*bound - prior (then select all >= bound)
+      ## Upper: 2*bound - prior (then select all <= bound)
+      if(constraint == "zero-one"){
+        pr <- prior[prior >= 0 & prior <= 1]
+        pr <- c(pr, -pr, 2 - pr)
+        prDens <- stats::density(pr, kernel = "gaussian", width = 4 * bw, n = 2^13)
+        prDens$y <- 3 * prDens$y[prDens$x >= 0 & prDens$x <=1]
+        prDens$x <- prDens$x[prDens$x >= 0 & prDens$x <= 1]
+      }
+      if(constraint == "correlation"){
+        pr <- prior[prior >= -1 & prior <= 1]
+        pr <- c(pr, -2 - pr, 2 - pr)
+        prDens <- stats::density(pr, kernel = "gaussian", width = 4 * bw, n = 2^13)
+        prDens$y <- 3 * prDens$y[prDens$x >= -1 & prDens$x <=1]
+        prDens$x <- prDens$x[prDens$x >= -1 & prDens$x <= 1]
+      }
+      if(constraint == "positive"){
+#        pr <- prior[prior >= 0 & prior <= prra[2L]]
+#        pr <- c(pr, -pr, 2*prra[2L] - pr)
+#        prDens <- stats::density(pr, kernel = "gaussian", width = 4 * bw, n = 2^13)
+#        prDens$y <- 3 * prDens$y[prDens$x >= 0 & prDens$x <= prra[2L]]
+#        prDens$x <- prDens$x[prDens$x >= 0 & prDens$x <= prra[2L]]
+        pr <- prior[prior >= 0]
+        pr <- c(pr, -pr)
+        prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
+        prDens$y <- 2 * prDens$y[prDens$x >= 0]
+        prDens$x <- prDens$x[prDens$x >= 0]
+      }
+      if(constraint == "unbounded"){
+#        pr <- prior[prior >= prra[1L] & prior <= prra[2L]]
+#        pr <- c(pr, 2*prra[1L] - pr, 2*prra[2L] - pr)
+#        prDens <- stats::density(pr, kernel = "gaussian", width = 4 * bw, n = 2^13)
+#        prDens$y <- 3 * prDens$y[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
+#        prDens$x <- prDens$x[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
+        prDens <- stats::density(prior, kernel = "gaussian", width = 4 * bw, n = 2^13)
+      }
+#      if(prra[1L] > 0 && prra[1L] < 1){
+#        prDens <- stats::density(prior[which(prior >= prra[1L] & prior <= prra[2L])],
+#	  from = 0)
+#      } else{
+#          prDens <- stats::density(prior[which(prior >= prra[1L] & prior <= prra[2L])])
+#        }
+    } else prDens <- stats::density(prior, bw = "nrd", kernel = "gaussian", n = 2^13)
     }
     if(is.list(prior)){
       stop("prior as a list is not yet implemented. Supply a `mcmc` object") #TODO
