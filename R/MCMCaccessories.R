@@ -172,11 +172,18 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
     if(min(po) < 0 && 1 + min(po) < 2 * bw){
       constraint <- "correlation"
       po <- c(po, -2 - po, 2 - po)
-    }      
+    } else{
+        constraint <- "upbound1"  #<-- most likely correlation converge on 1
+        po <- c(po, 2-po)
+      }
   } else{
       if(min(po) >= 0 && min(po) < 2 * bw){
         constraint <- "positive"
         po <- c(po, -po)
+      }
+      if(min(po) >= -1 && 1 + min(po) < 2 * bw){
+        constraint <- "lobound1"  #<-- most likely correlation converge on -1
+        po <- c(po, -2 - po)
       }
     }
   poDens <- stats::density(po, kernel = "gaussian", width = 4 * bw, n = 2^13)
@@ -187,6 +194,14 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
   if(constraint == "correlation"){
     poDens$y <- 3 * poDens$y[poDens$x >= -1 & poDens$x <=1]
     poDens$x <- poDens$x[poDens$x >= -1 & poDens$x <= 1]
+  }
+  if(constraint == "upbound1"){  #<-- most likely correlation converge on 1
+    poDens$y <- 2 * poDens$y[poDens$x <=1]
+    poDens$x <- poDens$x[poDens$x <= 1]
+  }
+  if(constraint == "lobound1"){  #<-- most likely correlation converge on -1
+    poDens$y <- 2 * poDens$y[poDens$x >= -1]
+    poDens$x <- poDens$x[poDens$x >= -1]
   }
   if(constraint == "positive"){
     poDens$y <- 2 * poDens$y[poDens$x >= 0]
@@ -229,7 +244,22 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
         prDens$y <- 3 * prDens$y[prDens$x >= -1 & prDens$x <=1]
         prDens$x <- prDens$x[prDens$x >= -1 & prDens$x <= 1]
       }
+      if(constraint == "upbound1"){  #<-- most likely correlation converge on 1
+        pr <- prior[prior <= 1]
+        pr <- c(pr, 2 - pr)
+        prDens <- stats::density(pr, kernel = "gaussian", width = 4 * bw, n = 2^13)
+        prDens$y <- 2 * prDens$y[prDens$x <=1]
+        prDens$x <- prDens$x[prDens$x <= 1]
+      }
+      if(constraint == "lobound1"){  #<-- most likely correlation converge on -1
+        pr <- prior[prior >= -1]
+        pr <- c(pr, -2 - pr)
+        prDens <- stats::density(pr, kernel = "gaussian", width = 4 * bw, n = 2^13)
+        prDens$y <- 2 * prDens$y[prDens$x >= -1]
+        prDens$x <- prDens$x[prDens$x >= -1]
+      }
       if(constraint == "positive"){
+#FIXME issues when prior range is used on very flat parameter expanded prior
         #XXX NOTE calculates own `bw` and does not use `width` with posterior bw
         pr <- prior[prior >= 0 & prior <= prra[2L]]
         pr <- c(pr, -pr, 2*prra[2L] - pr)
