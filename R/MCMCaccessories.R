@@ -193,7 +193,6 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
   #######
   if(!is.null(prior)){
     if(coda::is.mcmc(prior)){
-    if(FALSE){
       ## range of prior/posterior
       #TODO argument matching for prange
       prra <- if(prange == "post") range(posterior) else range(prior)
@@ -215,32 +214,26 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
         prDens$x <- prDens$x[prDens$x >= -1 & prDens$x <= 1]
       }
       if(constraint == "positive"){
-#        pr <- prior[prior >= 0 & prior <= prra[2L]]
-#        pr <- c(pr, -pr, 2*prra[2L] - pr)
-#        prDens <- stats::density(pr, kernel = "gaussian", width = 4 * bw, n = 2^13)
-#        prDens$y <- 3 * prDens$y[prDens$x >= 0 & prDens$x <= prra[2L]]
-#        prDens$x <- prDens$x[prDens$x >= 0 & prDens$x <= prra[2L]]
-        pr <- prior[prior >= 0]
-        pr <- c(pr, -pr)
+        #XXX NOTE calculates own `bw` and does not use `width` with posterior bw
+        pr <- prior[prior >= 0 & prior <= prra[2L]]
+        pr <- c(pr, -pr, 2*prra[2L] - pr)
         prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
-        prDens$y <- 2 * prDens$y[prDens$x >= 0]
-        prDens$x <- prDens$x[prDens$x >= 0]
+        prDens$y <- 3 * prDens$y[prDens$x >= 0 & prDens$x <= prra[2L]]
+        prDens$x <- prDens$x[prDens$x >= 0 & prDens$x <= prra[2L]]
+#        pr <- prior[prior >= 0]
+#        pr <- c(pr, -pr)
+#        prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
+#        prDens$y <- 2 * prDens$y[prDens$x >= 0]
+#        prDens$x <- prDens$x[prDens$x >= 0]
       }
       if(constraint == "unbounded"){
-#        pr <- prior[prior >= prra[1L] & prior <= prra[2L]]
-#        pr <- c(pr, 2*prra[1L] - pr, 2*prra[2L] - pr)
-#        prDens <- stats::density(pr, kernel = "gaussian", width = 4 * bw, n = 2^13)
-#        prDens$y <- 3 * prDens$y[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
-#        prDens$x <- prDens$x[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
-        prDens <- stats::density(prior, kernel = "gaussian", width = 4 * bw, n = 2^13)
+        #XXX NOTE calculates own `bw` and does not use `width` with posterior bw
+        pr <- prior[prior >= prra[1L] & prior <= prra[2L]]
+        pr <- c(pr, 2*prra[1L] - pr, 2*prra[2L] - pr)
+        prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
+        prDens$y <- 3 * prDens$y[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
+        prDens$x <- prDens$x[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
       }
-#      if(prra[1L] > 0 && prra[1L] < 1){
-#        prDens <- stats::density(prior[which(prior >= prra[1L] & prior <= prra[2L])],
-#	  from = 0)
-#      } else{
-#          prDens <- stats::density(prior[which(prior >= prra[1L] & prior <= prra[2L])])
-#        }
-    } else prDens <- stats::density(prior, bw = "nrd", kernel = "gaussian", n = 2^13)
     }
     if(is.list(prior)){
       stop("prior as a list is not yet implemented. Supply a `mcmc` object") #TODO
