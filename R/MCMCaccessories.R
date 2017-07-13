@@ -110,6 +110,22 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'   \code{\link[graphics]{axis}} for details.
 #' @param \dots Additional arguments passed to \code{densplot}, \code{hist},
 #'   \emph{and} \code{abline}.
+#'
+#' @return A \code{list} returned invisibly (assign to keep):
+#'   \describe{
+#'     \item{call}{The original \code{call}.}
+#'     \item{postDensity}{Object of \code{class} "density" for the posterior
+#'       distribution.}
+#'     \item{priorDensity}{Object of \code{class} "density" for the prior
+#'       distribution.}
+#'     \item{bandwith}{The density bandwith from the posterior used to set some
+#'         the bandwith in the prior under some constraints.FIXME}
+#'     \item{histOut}{Object of \code{class} "histogram" for the posterior
+#'         distribution.}
+#'     \item{constraint}{A \code{character} indicating if any densities were
+#'         adjusted because of boundary constraints.}
+#'   }
+#'
 #' @author \email{matthewwolak@@gmail.com}
 #' @seealso \code{\link[coda]{densplot}}, \code{\link[graphics]{hist}}
 #' @family MCMC posterior distribution helper functions
@@ -139,9 +155,9 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
   sub.title <- if(missing(sub)) "" else sub
   if(missing(ylim)){
     histout <- if(plotHist){
-      graphics::hist(posterior, breaks = histbreaks, plot = FALSE)$density
+      graphics::hist(posterior, breaks = histbreaks, plot = FALSE)
     } else 0
-    ylimit <- c(0, max(c(poDens$y, histout)))
+    ylimit <- c(0, max(c(poDens$y, histout$density)))
   } else ylimit <- ylim
 
   # Adjust density at boundaries
@@ -262,7 +278,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
  return(invisible(list(call = match.call(),
 	postDensity = poDens, priorDensity = prDens,
 	bandwith = bw,
-	histogramOut = histout,
+	histOut = histout,
 	constraint = constraint)))
 	
 }
