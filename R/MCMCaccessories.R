@@ -45,20 +45,20 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 ################################################################################
 #' Posterior distribution plot.
 #'
-#' Pretty plot of a posterior distribution, including summary statistics such as the
-#' posterior mean and credible interval.
+#' Pretty plot of a posterior distribution that can include summary statistics,
+#' such as the posterior mean and credible interval as well as a prior density.
 #'
 #' To plot a prior distribution, \code{prior} should either specify an object of
 #'   class \code{\link[coda]{mcmc}} that contains a simulated prior distribution
-#'   or it should contain a \code{list} with the prior specification according
-#'   to the instructions for specifying G-structure priors in
-#'   \code{\link[MCMCglmm]{MCMCglmm}}.
+#'   or it should contain a \code{list} which contains the prior density (where
+#'   the first two elements must be named \code{x} and \code{y} and contain the
+#'   quantiles and density, respectively.). Note that a function to generate the
+#'   prior distribution may be specified. However, this must return either a
+#'   \code{mcmc} or \code{list} object.
 #'
 #' Add more about prior plotting, specifically how parameter expanded priors are
 #'   simulated versus inverse-Wishart/Gamma are derived straight from their
-#'   distribution functions. Further, add how to specify which marginal component
-#'   to plot, how to specify `n` samples, fix in residual covariance matrices,
-#'   and what about fixed effects? Also, note how density is calculated
+#'   distribution functions. Also, note how density is calculated
 #'   after 'trimming' to range of the posterior samples.
 #'
 #' @section Warning:
@@ -76,12 +76,13 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' @param histbreaks If \code{plotHist = TRUE}, then the number of breaks. See
 #'   \code{\link[graphics]{hist}} for details.
 #'
-#' @param prior Should a line be added representing the prior distribution. If
+#' @param prior The prior distribution for a line be added to the plot. If
 #'   \code{NULL} (the default) then no line is added. A prior is plotted if
-#'   either a \code{\link[coda]{mcmc}} object or prior specification is supplied
-#'   (see Details).
-#' @param prange Character argument specificing which range
-#'   \code{c("prior", "posterior")} the prior distribution should span.
+#'   either a \code{\link[coda]{mcmc}} object or \code{list} with the prior 
+#'   density is supplied. See Details.
+#' @param prange Character argument specifying which range
+#'   \code{c("prior", "posterior")} the prior distribution should span. Currently,
+#'   only works when class \code{mcmc} provided to \code{prior}.#FIXME
 #'
 #' @param main Overall title for the plot. See \code{\link[graphics]{plot}} and
 #'   \code{\link[graphics]{title}}.
