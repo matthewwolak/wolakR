@@ -5,10 +5,11 @@
 \title{Posterior distribution plot.}
 \usage{
 postPlot(posterior, plotHist = TRUE, histbreaks = 100, prior = NULL,
-  denslwd = 6, denslty = "solid", denscol = "black", hpdlwd = 6,
-  hpdlty = "dashed", hpdcol = "black", meanlwd = 7, meanlty = "12",
-  meancol = "red", priorlwd = 4, priorlty = "solid", priorcol = "green",
-  ylim, at1 = NULL, at2 = NULL, labels1 = NULL, labels2 = NULL, ...)
+  prange = c("prior", "posterior"), main, sub, ylim, denslwd = 6,
+  denslty = "solid", denscol = "black", hpdlwd = 6, hpdlty = "dashed",
+  hpdcol = "black", meanlwd = 7, meanlty = "12", meancol = "red",
+  priorlwd = 3, priorlty = "solid", priorcol = "green", at1 = NULL,
+  at2 = NULL, labels1 = NULL, labels2 = NULL, ...)
 }
 \arguments{
 \item{posterior}{Object containing a marginal posterior distribution from
@@ -25,6 +26,18 @@ from which kernel density estimates can be calulated by the
 either a \code{\link[coda]{mcmc}} object or prior specification is supplied
 (see Details).}
 
+\item{prange}{Character argument specificing which range
+\code{c("prior", "posterior")} the prior distribution should span.}
+
+\item{main}{Overall title for the plot. See \code{\link[graphics]{plot}} and
+\code{\link[graphics]{title}}.}
+
+\item{sub}{Sub-title for the plot. See \code{\link[graphics]{plot}} and
+\code{\link[graphics]{title}}.}
+
+\item{ylim}{Y-axis limits to the plotting region, passed to
+\code{\link[coda]{densplot}}. See \code{\link[graphics]{plot.window}}.}
+
 \item{denslwd, hpdlwd, meanlwd, priorlwd}{The line widths for the lines to be plotted
 representing the kernel density estimate (\code{denslwd}), credible
 interval limits (\code{hpdlwd}), or posterior mean (\code{meanlwd}). See
@@ -40,9 +53,6 @@ representing the kernel density estimate (\code{denscol}), credible
 interval limits (\code{hpdcol}), or posterior mean (\code{meancol}). See
 \code{\link[graphics]{par}} for details.}
 
-\item{ylim}{Y-axis limits to the plotting region, passed to
-\code{\link[coda]{densplot}}. See \code{\link[graphics]{plot.window}}.}
-
 \item{at1, at2}{The points at which tick-marks are to be drawn on the
 x-axis (\code{at1}) and y-axis (\code{at2}). See
 \code{\link[graphics]{axis}} for details.}
@@ -53,6 +63,22 @@ x-axis (\code{labels1}) and and y-axis (\code{labels2}). See
 
 \item{\dots}{Additional arguments passed to \code{densplot}, \code{hist},
 \emph{and} \code{abline}.}
+}
+\value{
+A \code{list} returned invisibly (assign to keep):
+  \describe{
+    \item{call}{The original \code{call}.}
+    \item{postDensity}{Object of \code{class} "density" for the posterior
+      distribution.}
+    \item{priorDensity}{Object of \code{class} "density" for the prior
+      distribution.}
+    \item{bandwith}{The density bandwith from the posterior used to set some
+        the bandwith in the prior under some constraints.FIXME}
+    \item{histOut}{Object of \code{class} "histogram" for the posterior
+        distribution.}
+    \item{constraint}{A \code{character} indicating if any densities were
+        adjusted because of boundary constraints.}
+  }
 }
 \description{
 Pretty plot of a posterior distribution, including summary statistics such as the
