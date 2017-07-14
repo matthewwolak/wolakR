@@ -34,6 +34,7 @@ in the \code{\link[MCMCglmm]{MCMCglmm}} documentation covering the way
 to specify variance structure priors in the \code{prior} argument.
 }
 \examples{
+set.seed(101)
 (peIW <- rpeIW(n = 5, V = diag(2), nu = 3,
 alpha.mu = rep(0, 2), alpha.V = diag(2)*1000))
 sapply(1:5, FUN = function(i){matrix(peIW[i, ], 2, 2)}, simplify = "array")
