@@ -148,6 +148,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 	at1 = NULL, at2 = NULL,
 	labels1 = NULL, labels2 = NULL, ...){
 
+  cl <- match.call()
   # bw.nrd() is like `bwf()` in `coda::densplot()` 
   poDens <- stats::density(posterior, bw = "nrd", kernel = "gaussian", n = 2^13)
   bw <- poDens$bw
@@ -285,21 +286,15 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
         prDens$x <- prDens$x[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
       }
     }
+
     if(is.list(prior)){
-      stop("prior as a list is not yet implemented. Supply a `mcmc` object") #TODO
-      if(!is.matrix(V)) V <- as.matrix(V)
       rc <- nrow(V)
-      if(nrow(V) != ncol(V)) stop("V must be a square symmetric matrix")
-      if(!all(diag(V) > 0)){
-        stop("V is not positive definite (V has 0 or negative diagonal values)")
-      } 
-      #TODO add check of V for positive definiteness
-      ## could use `MCMCglmm:::is.positive.definite()` or `eigen()`
 
       if(is.null(alpha.mu) && is.null(alpha.V)){
         stop("Need to add how to do non-parameter expanded priors")  #TODO
       }
     }
+
     if(!coda::is.mcmc(prior) && !is.list(prior)){
       warning("prior is not a `list` or `mcmc` object - no prior added to plot")
     }
@@ -309,7 +304,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 	col = priorcol, lty = priorlty, lwd = priorlwd, ...)
   }
  
- return(invisible(list(call = match.call(),
+ return(invisible(list(call = cl,
 	postDensity = poDens, priorDensity = prDens,
 	bandwith = bw,
 	histOut = histout,
