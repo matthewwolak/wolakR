@@ -182,7 +182,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
         po <- c(po, -po)
       }
       if(min(po) >= -1 && 1 + min(po) < 2 * bw){
-        constraint <- "lobound1"  #<-- most likely correlation converge on -1
+        constraint <- "loboundNeg1"  #<-- most likely correlation converge on -1
         po <- c(po, -2 - po)
       }
     }
@@ -199,7 +199,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
     poDens$y <- 2 * poDens$y[poDens$x <=1]
     poDens$x <- poDens$x[poDens$x <= 1]
   }
-  if(constraint == "lobound1"){  #<-- most likely correlation converge on -1
+  if(constraint == "loboundNeg1"){  #<-- most likely correlation converge on -1
     poDens$y <- 2 * poDens$y[poDens$x >= -1]
     poDens$x <- poDens$x[poDens$x >= -1]
   }
@@ -237,7 +237,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
         prDens$y <- 3 * prDens$y[prDens$x >= 0 & prDens$x <=1]
         prDens$x <- prDens$x[prDens$x >= 0 & prDens$x <= 1]
       }
-      if(constraint == "upbound1" | constraint == "lobound1"){
+      if(constraint == "upbound1" | constraint == "loboundNeg1"){
         if(min(prior) >= -1 && 1 + min(prior) < 2 * bw &&
           max(prior) <= 1 && 1 - max(prior) < 2 * bw) constraint <- "correlation"
       }
@@ -255,7 +255,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
         prDens$y <- 2 * prDens$y[prDens$x <=1]
         prDens$x <- prDens$x[prDens$x <= 1]
       }
-      if(constraint == "lobound1"){  #<-- most likely correlation converge on -1
+      if(constraint == "loboundNeg1"){  #<-- most likely correlation converge on -1
         pr <- prior[prior >= -1]
         pr <- c(pr, -2 - pr)
         prDens <- stats::density(pr, kernel = "gaussian", width = 4 * bw, n = 2^13)
