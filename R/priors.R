@@ -28,8 +28,11 @@
 #'   variance (\code{FALSE}) or the marginal densities of the first variance
 #'   in a covariance matrix \code{V[1, 1]} (\code{TRUE}) are to be returned.
 #'
-#' @return A numeric vector of \code{length(x)} giving the densities along
-#'   \code{x}.
+#' @return A \code{list} containing
+#'   \describe{
+#'     \item{x}{Numeric vector of quantiles originally passed to the function.}
+#'     \item{y}{Numeric vector of densities.}
+#'   }
 #'
 #' @author \email{matthewwolak@@gmail.com}
 #' @references
@@ -46,14 +49,15 @@
 #' IG0.2 <- dIW(xseq, V = 1, nu = 0.2)
 #' ## end with point mass near V
 #' IG1 <- dIW(xseq, V = 1, nu = 1)
-#' plot(IG0.002 ~ xseq, type = "n",
+#' plot(IG0.002, type = "n",
 #'   main = "Inverse Gamma\nV = 1",
 #'   xlab = "Variance", ylab = "Density",
-#'   xlim = c(0, max(xseq)), ylim = c(0, max(c(IG0.002, IG0.02, IG0.2, IG1))))
-#'  lines(IG0.002 ~ xseq, lwd = 2, col = "black")
-#'  lines(IG0.02 ~ xseq, lwd = 2, col = "red")
-#'  lines(IG0.2 ~ xseq, lwd = 2, col = "blue")
-#'  lines(IG1 ~ xseq, lwd = 2, col = "grey40")
+#'   xlim = c(0, max(xseq)),
+#'   ylim = c(0, max(c(IG0.002$y, IG0.02$y, IG0.2$y, IG1$y))))
+#'  lines(IG0.02, lwd = 2, col = "red")
+#'  lines(IG0.2, lwd = 2, col = "blue")
+#'  lines(IG1, lwd = 2, col = "grey40")
+#'  lines(IG0.002, lwd = 3, col = "black")
 #'  legend("topright", lwd = 2, col = c("black", "red", "blue", "grey40"),
 #' 	title = "nu", legend = as.character(c(0.002, 0.02, 0.2, 1)),
 #' 	inset = 0.01)
@@ -63,12 +67,12 @@
 #' #######################
 #' mar1 <- dIW(xseq, V = diag(2), nu = 1.002, marginal = TRUE)
 #' # compare to IG0.002 above
-#' plot(mar1 ~ xseq, type = "n",
+#' plot(mar1, type = "n",
 #'   main = "Marginal prior for a variance:\n IW(V = diag(2), nu = 1.002)",
 #'   xlab = "Variance", ylab = "Density",
-#'   xlim = c(0, max(xseq)), ylim = c(0, max(c(mar1, IG0.002))))
-#'  lines(mar1 ~ xseq, lwd = 2, col = "red")
-#'  lines(IG0.002 ~ xseq, lwd = 2, col = "black")
+#'   xlim = c(0, max(xseq)), ylim = c(0, max(c(mar1$y, IG0.002$y))))
+#'  lines(mar1, lwd = 2, col = "red")
+#'  lines(IG0.002, lwd = 2, col = "black")
 #'  legend("topright", col = c("red", "black"), lwd = 2,
 #' 	legend = c("marginal prior",
 #' 		"univariate prior\nIG(V=1, nu=0.002)"),
@@ -78,11 +82,13 @@ dIW <- function(x, V = 1, nu = 1, marginal = FALSE){
     if(is.matrix(V) && nrow(V) > 1){
       stop("'V' must be a scalar/single number when 'marginal = FALSE'")
     }
-   return(MCMCpack:::dinvgamma(x, shape = nu / 2, scale = (nu * V) / 2))
+   return(list(x = x,
+	y = MCMCpack:::dinvgamma(x, shape = nu / 2, scale = (nu * V) / 2)))
   } else{
       nu2 <- nu - dim(V)[1] + 1
       V2 <- (nu / nu2) * V[1, 1]
-     return(MCMCpack:::dinvgamma(x, shape = nu2 / 2, scale =  (nu2 * V2) / 2))
+     return(list(x = x,
+	y = MCMCpack:::dinvgamma(x, shape = nu2 / 2, scale =  (nu2 * V2) / 2)))
     }
 }
 
