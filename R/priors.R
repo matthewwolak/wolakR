@@ -1,10 +1,10 @@
 ################################################################################
 # 	Altered from the code written by Jarrod Hadfield
 	################################################
-#' Parameter expanded inverse Wishart.
+#' Parameter expanded inverse Wishart (co)variance.
 #'
-#' Simulate inverse Wishart distribution with parameter expansion on the
-#' hyperparameters.
+#' Simulate prior (co)variance matrix according to the inverse Wishart
+#' distribution with parameter expansion on the hyperparameters.
 #'
 #' Details on the meaning of \code{V, nu, alpha.mu, alpha.V} can be found
 #' in the \code{\link[MCMCglmm]{MCMCglmm}} documentation covering the way
@@ -21,15 +21,16 @@
 #'   working parameters.
 #'
 #' @return A numeric vector (if the dimensions of \code{V} are 1) or matrix
-#'   where each row designates a sample and the columns contain the matrix
-#'   elements for a prior matrix.
+#'   where each row designates a sampled (co)variance and the columns contain
+#'   the matrix elements for the prior covariance matrix.
 #'
 #' @author \email{matthewwolak@@gmail.com}
 #' @seealso \code{\link[MCMCglmm]{MCMCglmm}}, \code{\link[MCMCglmm]{rIW}}
 #' @family prior functions
 #' @examples
-#' rpeIW(n = 10, V = diag(2), nu = 3,
-#'	alpha.mu = rep(0, 2), alpha.V = diag(2)*1000)
+#' (peIW <- rpeIW(n = 5, V = diag(2), nu = 3,
+#'	alpha.mu = rep(0, 2), alpha.V = diag(2)*1000))
+#' sapply(1:5, FUN = function(i){matrix(peIW[i, ], 2, 2)}, simplify = "array")
 rpeIW <- function(n = 1, V, nu, alpha.mu, alpha.V){
   k <- nrow(V)
   alpha <- MASS::mvrnorm(n, alpha.mu, alpha.V)
