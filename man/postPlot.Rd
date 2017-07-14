@@ -116,6 +116,10 @@ ncol = 2))
 par(mfrow = c(2, 1))
   postPlot(normMCMC[, 1], ylim = c(0, 1))
   postPlot(normMCMC[, 2], ylim = c(0, 1))
+
+# Now include an inverse Gamma prior, using the density function
+postPlot(normMCMC[, 1], ylim = c(0,1),
+  prior = dIW(seq(1e-16, 5, length = 1000), V = diag(1), nu = 1))
 }
 \seealso{
 \code{\link[coda]{densplot}}, \code{\link[graphics]{hist}}
