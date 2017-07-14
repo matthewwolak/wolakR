@@ -1,6 +1,99 @@
 ################################################################################
 # 	Altered from the code written by Jarrod Hadfield
 	################################################
+#TODO add this documentation with `rpeIW()` so show up in single help file
+
+#' Inverse Wishart (co)variance density.
+#'
+#' Density generating function for the inverse Wishart distribution.
+#'
+#' When \code{V = 1}, the inverse Wishart distribution is equivalent to an
+#' inverse Gamma distribution with shape and scale parameters set to
+#' \code{nu / 2}. In other words, the inverse Gamma is a special case of the
+#' inverse Wishart (Hadfield 2015, p. 12), where the inverse Wishart is the
+#' multivariate generalization of the inverse Gamma distribution.
+#'
+#' As \code{nu} goes to infinity, the point mass moves towards \code{V}. The
+#' mode of the distributions is calculated by \code{(V * nu) / (nu + 2)}
+#' (Hadfield 2015, p. 12).
+
+#'
+#' @aliases dIW
+#' @export
+#' @param x Vector of quantiles.
+#' @param V Numeric matrix of the expected (co)variances
+#' @param nu Numeric for the degree of belief parameter for the inverse-
+#'   Wishart.
+#' @param marginal Logical indicating whether the densities for a single
+#'   variance (\code{FALSE}) or the marginal densities of the first variance
+#'   in a covariance matrix \code{V[1, 1]} (\code{TRUE}) are to be returned.
+#'
+#' @return A numeric vector of \code{length(x)} giving the densities along
+#'   \code{x}.
+#'
+#' @author \email{matthewwolak@@gmail.com}
+#' @references
+#' Hadfield, J. 2015. MCMCglmm Course Notes. June 20, 2015.
+#' @seealso \code{\link[MCMCglmm]{MCMCglmm}}, \code{\link[MCMCglmm]{rIW}},
+#'   \code{rpeIW}
+#' @family prior functions
+#' @examples
+#' xseq <- seq(from = 1e-16, to = 5, length = 1000)
+#' # Plot range of prior distributions
+#' ## start with inverse Gamma with small degree of belief and point mass ~ 0
+#' IG0.002 <- dIW(xseq, V = 1, nu = 0.002)
+#' IG0.02 <- dIW(xseq, V = 1, nu = 0.02)
+#' IG0.2 <- dIW(xseq, V = 1, nu = 0.2)
+#' ## end with point mass near V
+#' IG1 <- dIW(xseq, V = 1, nu = 1)
+#' plot(IG0.002 ~ xseq, type = "n",
+#'   main = "Inverse Gamma\nV = 1",
+#'   xlab = "Variance", ylab = "Density",
+#'   xlim = c(0, max(xseq)), ylim = c(0, max(c(IG0.002, IG0.02, IG0.2, IG1))))
+#'  lines(IG0.002 ~ xseq, lwd = 2, col = "black")
+#'  lines(IG0.02 ~ xseq, lwd = 2, col = "red")
+#'  lines(IG0.2 ~ xseq, lwd = 2, col = "blue")
+#'  lines(IG1 ~ xseq, lwd = 2, col = "grey40")
+#'  legend("topright", lwd = 2, col = c("black", "red", "blue", "grey40"),
+#' 	title = "nu", legend = as.character(c(0.002, 0.02, 0.2, 1)),
+#' 	inset = 0.01)
+#'
+#' #######################
+#' # Marginal variance
+#' #######################
+#' mar1 <- dIW(xseq, V = diag(2), nu = 1.002, marginal = TRUE)
+#' # compare to IG0.002 above
+#' plot(mar1 ~ xseq, type = "n",
+#'   main = "Marginal prior for a variance:\n IW(V = diag(2), nu = 1.002)",
+#'   xlab = "Variance", ylab = "Density",
+#'   xlim = c(0, max(xseq)), ylim = c(0, max(c(mar1, IG0.002))))
+#'  lines(mar1 ~ xseq, lwd = 2, col = "red")
+#'  lines(IG0.002 ~ xseq, lwd = 2, col = "black")
+#'  legend("topright", col = c("red", "black"), lwd = 2,
+#' 	legend = c("marginal prior",
+#' 		"univariate prior\nIG(V=1, nu=0.002)"),
+#' 	inset = 0.01)
+dIW <- function(x, V = 1, nu = 1, marginal = FALSE){
+  if(!marginal){
+    if(is.matrix(V) && nrow(V) > 1){
+      stop("'V' must be a scalar/single number when 'marginal = FALSE'")
+    }
+   return(MCMCpack:::dinvgamma(x, shape = nu / 2, scale = (nu * V) / 2))
+  } else{
+      nu2 <- nu - dim(V)[1] + 1
+      V2 <- (nu / nu2) * V[1, 1]
+     return(MCMCpack:::dinvgamma(x, shape = nu2 / 2, scale =  (nu2 * V2) / 2))
+    }
+}
+
+
+
+
+
+
+################################################################################
+# 	Altered from the code written by Jarrod Hadfield
+	################################################
 #' Parameter expanded inverse Wishart (co)variance.
 #'
 #' Simulate prior (co)variance matrix according to the inverse Wishart
