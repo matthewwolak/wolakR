@@ -154,10 +154,10 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
   bw <- poDens$bw
   main.title <- if(missing(main)) "" else main
   sub.title <- if(missing(sub)) "" else sub
+  histout <- if(plotHist){
+               graphics::hist(posterior, breaks = histbreaks, plot = FALSE)
+             } else 0
   if(missing(ylim)){
-    histout <- if(plotHist){
-      graphics::hist(posterior, breaks = histbreaks, plot = FALSE)
-    } else 0
     ylimit <- c(0, max(c(poDens$y, histout$density)))
   } else ylimit <- ylim
 
@@ -224,6 +224,13 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
   # Prior
   #######
   if(!is.null(prior)){
+    if(is.list(prior)){
+      if(names(prior)[1L] != "x" || names(prior)[2L] != "y"){
+        stop("prior must be either an object of class `mcmc`, a `list` containing a density, or a function that returns either of these")
+      }
+      prDens <- prior
+    }
+
     if(coda::is.mcmc(prior)){
       ## range of prior/posterior
       #TODO argument matching for prange
@@ -265,6 +272,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
       }
       if(constraint == "positive"){
 #FIXME issues when prior range is used on very flat parameter expanded prior
+## Density is high near zero, so usually above posterior plot and off figure panel
         #XXX NOTE calculates own `bw` and does not use `width` with posterior bw
         pr <- prior[prior >= 0 & prior <= prra[2L]]
         pr <- c(pr, -pr, 2*prra[2L] - pr)
@@ -287,21 +295,13 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
       }
     }
 
-    if(is.list(prior)){
-      rc <- nrow(V)
-
-      if(is.null(alpha.mu) && is.null(alpha.V)){
-        stop("Need to add how to do non-parameter expanded priors")  #TODO
-      }
-    }
-
     if(!coda::is.mcmc(prior) && !is.list(prior)){
       warning("prior is not a `list` or `mcmc` object - no prior added to plot")
-    }
-
+    } else{
     # Add prior density to plot
-    graphics::lines(prDens,
-	col = priorcol, lty = priorlty, lwd = priorlwd, ...)
+        graphics::lines(prDens,
+	  col = priorcol, lty = priorlty, lwd = priorlwd, ...)
+      }
   }
  
  return(invisible(list(call = cl,
@@ -311,6 +311,5 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 	constraint = constraint)))
 	
 }
-
 
 
