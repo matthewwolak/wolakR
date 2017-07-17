@@ -26,9 +26,13 @@ from which kernel density estimates can be calulated by the
 either a \code{\link[coda]{mcmc}} object or \code{list} with the prior 
 density is supplied. See Details.}
 
-\item{prange}{Character argument specifying which range
-\code{c("prior", "posterior")} the prior distribution should span. Currently,
-only works when class \code{mcmc} provided to \code{prior}.#FIXME}
+\item{prange}{Character argument specifying the relative range
+\code{c("prior", "posterior")} for the density estimation of the prior.
+The supplied argument must begin with either \code{prior} or
+\code{posterior} exactly, but can end with a numeric value indicating the
+relative range of the prior posterior to be used. See Details. Range
+adjustment currently only works when class \code{mcmc} provided to
+\code{prior}.#FIXME}
 
 \item{main}{Overall title for the plot. See \code{\link[graphics]{plot}} and
 \code{\link[graphics]{title}}.}
@@ -90,14 +94,26 @@ To plot a prior distribution, \code{prior} should either specify an object of
   class \code{\link[coda]{mcmc}} that contains a simulated prior distribution
   or it should contain a \code{list} which contains the prior density (where
   the first two elements must be named \code{x} and \code{y} and contain the
-  quantiles and density, respectively.). Note that a function to generate the
+  quantiles and densities, respectively.). Note that a function to generate the
   prior distribution may be specified. However, this must return either a
   \code{mcmc} or \code{list} object.
 
-Add more about prior plotting, specifically how parameter expanded priors are
-  simulated versus inverse-Wishart/Gamma are derived straight from their
-  distribution functions. Also, note how density is calculated
-  after 'trimming' to range of the posterior samples.
+TODO: Add more about prior plotting, specifically how parameter expanded
+  priors are simulated versus inverse-Wishart/Gamma are derived straight from
+  their distribution functions. Also, note how density is calculated#TODO
+
+If the prior is of class \code{mcmc} then the argument \code{prange} can be
+  used to either extend or restrict the range over which the prior density
+  estimation is conducted, in relation to the posterior distribution.
+  The range alteration is done by specifying \code{posteriorN}, or appending
+  the \code{"posterior"} character string with a numeric value indicating
+  the desired adjustment of the range. Prior density will then be calculated
+  after taking a subset of the current samples that fall in the range. Note,
+  this process only makes sense when used in conjunction with
+  \code{posterior}. By default, a \code{1} is used if there is no numeric
+  suffix; indicating that a 1-to-1 mapping of the range should be used.
+  Values of the suffix >1 will extend the range, while those <1 will contract
+  it.
 }
 \section{Warning}{
 
@@ -120,6 +136,17 @@ par(mfrow = c(2, 1))
 # Now include an inverse Gamma prior, using the density function
 postPlot(normMCMC[, 1], ylim = c(0,1),
   prior = dIW(seq(1e-16, 5, length = 1000), V = diag(1), nu = 1))
+
+# Example with parameter expanded prior:
+pepr <- coda::mcmc(rpeIW(1000, V = diag(2), nu = 2, alpha.mu = rep(0, 2),
+  alpha.V = diag(2)*1000))
+par(mfrow = c(2, 1))
+  postPlot(normMCMC[, 1], ylim = c(0, 1),
+    prior = pepr[,1], prange = "posterior6")
+  postPlot(normMCMC[, 2], ylim = c(0, 1),
+    prior = pepr[,4], prange = "posterior1.5") 
+# different scalar to get same y-intercept
+
 }
 \seealso{
 \code{\link[coda]{densplot}}, \code{\link[graphics]{hist}}
