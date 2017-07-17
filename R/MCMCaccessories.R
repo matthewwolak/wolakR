@@ -159,6 +159,18 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' # Now include an inverse Gamma prior, using the density function
 #' postPlot(normMCMC[, 1], ylim = c(0,1),
 #'   prior = dIW(seq(1e-16, 5, length = 1000), V = diag(1), nu = 1))
+#'
+#' # Example with parameter expanded prior:
+#' pepr <- coda::mcmc(rpeIW(1000, V = diag(2), nu = 2, alpha.mu = rep(0, 2),
+#'   alpha.V = diag(2)*1000))
+#' par(mfrow = c(2, 1))
+#'   postPlot(normMCMC[, 1], ylim = c(0, 1),
+#'     prior = pepr[,1], prange = "posterior6")
+#'   postPlot(normMCMC[, 2], ylim = c(0, 1),
+#'     prior = pepr[,4], prange = "posterior1.5") 
+#' # different scalar to get same y-intercept
+#'
+   
 postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 	prior = NULL, prange = c("prior", "posterior"),
 	main, sub, ylim,
@@ -319,11 +331,15 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
       }
       if(constraint == "unbounded"){
         #XXX NOTE calculates own `bw` and does not use `width` with posterior bw
-        pr <- prior[prior >= prra[1L]*prraN & prior <= prra[2L]*prraN]
-        pr <- c(pr, 2*prra[1L]*prraN - pr, 2*prra[2L]*prraN - pr)
+        if(prra[1L] < 0) prra[1L] <- prra[1L] * prraN
+        if(prra[1L] >= 0) prra[1L] <- prra[1L] * (1/prraN)
+        if(prra[2L] < 0) prra[2L] <- prra[2L] * (1/prraN)
+        if(prra[2L] >= 0) prra[2L] <- prra[2L] * prraN
+        pr <- prior[prior >= prra[1L] & prior <= prra[2L]]
+        pr <- c(pr, 2*prra[1L] - pr, 2*prra[2L] - pr)
         prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
-        prDens$y <- 3 * prDens$y[prDens$x >= prra[1L]*prraN & prDens$x <= prra[2L]*prraN]
-        prDens$x <- prDens$x[prDens$x >= prra[1L]*prraN & prDens$x <= prra[2L]*prraN]
+        prDens$y <- 3 * prDens$y[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
+        prDens$x <- prDens$x[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
       }
     }
 
