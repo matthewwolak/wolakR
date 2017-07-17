@@ -52,14 +52,26 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'   class \code{\link[coda]{mcmc}} that contains a simulated prior distribution
 #'   or it should contain a \code{list} which contains the prior density (where
 #'   the first two elements must be named \code{x} and \code{y} and contain the
-#'   quantiles and density, respectively.). Note that a function to generate the
+#'   quantiles and densities, respectively.). Note that a function to generate the
 #'   prior distribution may be specified. However, this must return either a
 #'   \code{mcmc} or \code{list} object.
 #'
-#' Add more about prior plotting, specifically how parameter expanded priors are
-#'   simulated versus inverse-Wishart/Gamma are derived straight from their
-#'   distribution functions. Also, note how density is calculated
-#'   after 'trimming' to range of the posterior samples.
+#' TODO: Add more about prior plotting, specifically how parameter expanded
+#'   priors are simulated versus inverse-Wishart/Gamma are derived straight from
+#'   their distribution functions. Also, note how density is calculated#TODO
+#'
+#' If the prior is of class \code{mcmc} then the argument \code{prange} can be
+#'   used to either extend or restrict the range over which the prior density
+#'   estimation is conducted, in relation to the posterior distribution.
+#'   The range alteration is done by specifying \code{posteriorN}, or appending
+#'   the \code{"posterior"} character string with a numeric value indicating
+#'   the desired adjustment of the range. Prior density will then be calculated
+#'   after taking a subset of the current samples that fall in the range. Note,
+#'   this process only makes sense when used in conjunction with
+#'   \code{posterior}. By default, a \code{1} is used if there is no numeric
+#'   suffix; indicating that a 1-to-1 mapping of the range should be used.
+#'   Values of the suffix >1 will extend the range, while those <1 will contract
+#'   it.
 #'
 #' @section Warning:
 #' The use of the \dots argument is untested. Arguments of the same name that
@@ -80,9 +92,13 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'   \code{NULL} (the default) then no line is added. A prior is plotted if
 #'   either a \code{\link[coda]{mcmc}} object or \code{list} with the prior 
 #'   density is supplied. See Details.
-#' @param prange Character argument specifying which range
-#'   \code{c("prior", "posterior")} the prior distribution should span. Currently,
-#'   only works when class \code{mcmc} provided to \code{prior}.#FIXME
+#' @param prange Character argument specifying the relative range
+#'   \code{c("prior", "posterior")} for the density estimation of the prior.
+#'   The supplied argument must begin with either \code{prior} or
+#'   \code{posterior} exactly, but can end with a numeric value indicating the
+#'   relative range of the prior posterior to be used. See Details. Range
+#'   adjustment currently only works when class \code{mcmc} provided to
+#'   \code{prior}.#FIXME
 #'
 #' @param main Overall title for the plot. See \code{\link[graphics]{plot}} and
 #'   \code{\link[graphics]{title}}.
@@ -238,8 +254,19 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 
     if(coda::is.mcmc(prior)){
       ## range of prior/posterior
-      #TODO argument matching for prange
-      prra <- if(prange == "posterior") range(posterior) else range(prior)
+      if(missing(prange)) prange <- "prior"
+      if(!startsWith(prange, "prior") && !startsWith(prange, "posterior")){
+        stop("argument to 'prange' must start with the full word of either 'prior' or 'posterior'")
+      }
+      if(startsWith(prange, "prior")){
+        prraN <- as.numeric(strsplit(prange, "prior")[[1L]][2L])
+        prra <- range(prior)
+      }
+      if(startsWith(prange, "posterior")){
+        prraN <- as.numeric(strsplit(prange, "posterior")[[1L]][2L])
+        prra <- range(posterior)
+      }
+      if(is.na(prraN)) prraN <- 1
       # General formula for finding bounds
       ## Lower: 2*bound - prior (then select all >= bound)
       ## Upper: 2*bound - prior (then select all <= bound)
@@ -279,11 +306,11 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 #FIXME issues when prior range is used on very flat parameter expanded prior
 ## Density is high near zero, so usually above posterior plot and off figure panel
         #XXX NOTE calculates own `bw` and does not use `width` with posterior bw
-        pr <- prior[prior >= 0 & prior <= prra[2L]]
-        pr <- c(pr, -pr, 2*prra[2L] - pr)
+        pr <- prior[prior >= 0 & prior <= prra[2L]*prraN]
+        pr <- c(pr, -pr, 2*prra[2L]*prraN - pr)
         prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
-        prDens$y <- 3 * prDens$y[prDens$x >= 0 & prDens$x <= prra[2L]]
-        prDens$x <- prDens$x[prDens$x >= 0 & prDens$x <= prra[2L]]
+        prDens$y <- 3 * prDens$y[prDens$x >= 0 & prDens$x <= prra[2L]*prraN]
+        prDens$x <- prDens$x[prDens$x >= 0 & prDens$x <= prra[2L]*prraN]
 #        pr <- prior[prior >= 0]
 #        pr <- c(pr, -pr)
 #        prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
@@ -292,11 +319,11 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
       }
       if(constraint == "unbounded"){
         #XXX NOTE calculates own `bw` and does not use `width` with posterior bw
-        pr <- prior[prior >= prra[1L] & prior <= prra[2L]]
-        pr <- c(pr, 2*prra[1L] - pr, 2*prra[2L] - pr)
+        pr <- prior[prior >= prra[1L]*prraN & prior <= prra[2L]*prraN]
+        pr <- c(pr, 2*prra[1L]*prraN - pr, 2*prra[2L]*prraN - pr)
         prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
-        prDens$y <- 3 * prDens$y[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
-        prDens$x <- prDens$x[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
+        prDens$y <- 3 * prDens$y[prDens$x >= prra[1L]*prraN & prDens$x <= prra[2L]*prraN]
+        prDens$x <- prDens$x[prDens$x >= prra[1L]*prraN & prDens$x <= prra[2L]*prraN]
       }
     }
 
