@@ -170,7 +170,6 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'     prior = pepr[,4], prange = "posterior1.5") 
 #' # different scalar to get same y-intercept
 #'
-   
 postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 	prior = NULL, prange = c("prior", "posterior"),
 	main, sub, ylim,
@@ -316,7 +315,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
       }
       if(constraint == "positive"){
 #FIXME issues when prior range is used on very flat parameter expanded prior
-## Density is high near zero, so usually above posterior plot and off figure panel
+## Density is high near zero, so usually above posterior plot and off figure
         #XXX NOTE calculates own `bw` and does not use `width` with posterior bw
         pr <- prior[prior >= 0 & prior <= prra[2L]*prraN]
         pr <- c(pr, -pr, 2*prra[2L]*prraN - pr)
