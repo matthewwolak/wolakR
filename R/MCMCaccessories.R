@@ -307,7 +307,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
         graphics::lines(prDens,
 	  col = priorcol, lty = priorlty, lwd = priorlwd, ...)
       }
-  }
+  } else prDens <- NULL
  
  return(invisible(list(call = cl,
 	postDensity = poDens, priorDensity = prDens,
