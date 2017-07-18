@@ -2,6 +2,7 @@
 
 export(SDI)
 export(dIW)
+export(plot2mcmc)
 export(postPlot)
 export(postTable)
 export(rpeIW)

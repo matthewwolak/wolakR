@@ -124,7 +124,7 @@ with caution!
 }
 
 \examples{
-# Simulate to example MCMC chains:
+# Simulate two example MCMC chains:
 ## Both are standard normal distributions of only positive values
 ## However, one is on the boundary (near zero) while the other is not
 normMCMC <- coda::mcmc(matrix(c(abs(rnorm(1000, 0.2, 1)), rnorm(1000, 10, 1)),
@@ -151,7 +151,8 @@ par(mfrow = c(2, 1))
 \seealso{
 \code{\link[coda]{densplot}}, \code{\link[graphics]{hist}}
 
-Other MCMC posterior distribution helper functions: \code{\link{postTable}}
+Other MCMC posterior distribution helper functions: \code{\link{plot2mcmc}},
+  \code{\link{postTable}}
 }
 \author{
 \email{matthewwolak@gmail.com}

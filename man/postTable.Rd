@@ -30,7 +30,7 @@ Reports a table containing the mode, mean, and highest posterior density of
 the marginal posterior distribution.
 }
 \examples{
-# Simulate to example MCMC chains:
+# Simulate two example MCMC chains:
 ## Both are standard normal distributions of only positive values
 ## However, one is on the boundary (near zero) while the other is not
 normMCMC <- coda::mcmc(matrix(c(abs(rnorm(1000, 0.2, 1)), rnorm(1000, 10, 1)),
@@ -38,7 +38,8 @@ ncol = 2))
 postTable(normMCMC)
 }
 \seealso{
-Other MCMC posterior distribution helper functions: \code{\link{postPlot}}
+Other MCMC posterior distribution helper functions: \code{\link{plot2mcmc}},
+  \code{\link{postPlot}}
 }
 \author{
 \email{matthewwolak@gmail.com}
