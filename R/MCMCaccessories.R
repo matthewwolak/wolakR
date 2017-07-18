@@ -20,7 +20,7 @@
 #' @author \email{matthewwolak@@gmail.com}
 #' @family MCMC posterior distribution helper functions
 #' @examples
-#' # Simulate to example MCMC chains:
+#' # Simulate two example MCMC chains:
 #' ## Both are standard normal distributions of only positive values
 #' ## However, one is on the boundary (near zero) while the other is not
 #' normMCMC <- coda::mcmc(matrix(c(abs(rnorm(1000, 0.2, 1)), rnorm(1000, 10, 1)),
@@ -147,7 +147,7 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' @seealso \code{\link[coda]{densplot}}, \code{\link[graphics]{hist}}
 #' @family MCMC posterior distribution helper functions
 #' @examples
-#' # Simulate to example MCMC chains:
+#' # Simulate two example MCMC chains:
 #' ## Both are standard normal distributions of only positive values
 #' ## However, one is on the boundary (near zero) while the other is not
 #' normMCMC <- coda::mcmc(matrix(c(abs(rnorm(1000, 0.2, 1)), rnorm(1000, 10, 1)),
@@ -359,4 +359,142 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 	
 }
 
+
+
+
+
+
+
+
+
+
+
+################################################################################
+#' Two MCMC chain plot.
+#'
+#' Pretty plot of two MCMC chains side-by-side.
+#'
+#' @section Warning:
+#' The function attempts to match parameters by the column names, but may have
+#' trouble where vastly different objects are in each of the two MCMC objects.
+
+#' @aliases plot2mcmc
+#' @export
+#' @param x1 Object of class \code{mcmc} containing MCMC chain(s).
+#' @param x2 Optional object of class \code{mcmc} containing a second set of
+#'   MCMC chain(s).
+#'
+#' @param smooth Logical. See \code{\link[coda]{traceplot}} for details.#FIXME
+#' @param bwf Character indicating function to calculate the bandwith. See
+#'   \code{\link[coda]{traceplot}} for details.#TODO correspond with `postPlot()`
+#'
+#' @param save Logical indicating whether the plot should be saved as a pdf to
+#'   the hard drive.
+#' @param \dots Additional arguments passed to \code{densplot} and
+#'   \code{traceplot}.#FIXME update densplot and traceplot to own functions
+#'
+#' @return Nothing returned invisibly at the moment (assign to keep):#FIXME
+#'
+#' @author \email{matthewwolak@@gmail.com}
+#' @seealso \code{postPlot} and \code{\link[coda]{densplot}}
+#' @family MCMC posterior distribution helper functions
+#' @examples
+#' # Simulate two sets of two example MCMC chains:
+#' ## Both are standard normal distributions of only positive values
+#' ## However, one is on the boundary (near zero) while the other is not
+#' normMCMC <- coda::mcmc(matrix(c(abs(rnorm(1000, 0.2, 1)), rnorm(1000, 10, 1)),
+#'	ncol = 2))
+#' normMCMC2 <- coda::mcmc(matrix(c(abs(rnorm(1000, 0.2, 1)), rnorm(1000, 10, 1)),
+#'	ncol = 2))
+#' plot2mcmc(normMCMC, normMCMC2)
+plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
+    oldpar <- NULL
+    on.exit(par(oldpar))
+    if(is.null(x2)){
+      mfrow <- coda:::set.mfrow(Nchains = nchain(x1), Nparms = coda::nvar(x1), 
+          nplots = 2)
+      for (i in 1:coda::nvar(x1)) {
+        if(i %in% seq(from = 1, to = coda::nvar(x1), by = mfrow[1])){
+          x11(w = 7, h = 9)
+          par(mfrow = mfrow)
+          cnt <- 0
+        }
+
+        y1 <- coda::mcmc(as.matrix(x1)[, i, drop = FALSE], start(x1), 
+          end(x1), thin(x1))
+#TODO add own version of `traceplot()` (`plot` + `rug`)
+        coda::traceplot(y1, smooth = smooth, ...)
+        if (missing(bwf)) coda::densplot(y1, ...) else coda::densplot(y1, bwf = bwf, ...)
+
+        cnt <- cnt + 1
+        if(is.character(save) && (cnt == mfrow[1] | i == coda::nvar(x1))){
+          dev.copy(pdf, paste0("./plots/", save, "_", i-(cnt-1), "to", i, ".pdf"), w = 7, h = 9)
+          dev.off()
+        } 
+      }
+
+    } else{   
+        nvar_x1x2 <- max(c(coda::nvar(x1), coda::nvar(x2)))
+        largerX <- which(nvar_x1x2 == c(coda::nvar(x1), coda::nvar(x2)))[1]
+        mfrow <- coda:::set.mfrow(Nchains = nchain(x1), Nparms = nvar_x1x2, 
+            nplots = 2)
+        mfrow[2] <- 4
+
+        for (i in 1:nvar_x1x2) {
+          if(i %in% seq(from = 1, to = nvar_x1x2, by = mfrow[1])){
+             x11(w = 13, h = 9)
+              par(mfrow = mfrow)
+              cnt <- 0
+          }
+
+          if(coda::nvar(x1) == coda::nvar(x2)){
+            y1 <- coda::mcmc(as.matrix(x1)[, i, drop = FALSE], start(x1), 
+              end(x1), thin(x1))
+            coda::traceplot(y1, smooth = smooth, ...)
+            if (missing(bwf)) coda::densplot(y1, ...) else coda::densplot(y1, bwf = bwf, ...)
+
+            y2 <- coda::mcmc(as.matrix(x2)[, i, drop = FALSE], start(x2), end(x2), thin(x2))
+            coda::traceplot(y2, smooth = smooth, ...)
+            if (missing(bwf)) coda::densplot(y2, ...) else coda::densplot(y2, bwf = bwf, ...)
+
+          } else{
+              if(largerX == 1){
+                y1 <- coda::mcmc(as.matrix(x1)[, i, drop = FALSE], start(x1), end(x1), thin(x1))
+                coda::traceplot(y1, smooth = smooth, ...)
+                if (missing(bwf)) coda::densplot(y1, ...) else coda::densplot(y1, bwf = bwf, ...)
+  
+                if(colnames(x1)[i] %in% colnames(x2)){
+                  j <- match(colnames(x1)[i], colnames(x2))
+                  y2 <- coda::mcmc(as.matrix(x2)[, j, drop = FALSE], start(x2), end(x2), thin(x2))
+		  #TODO use own version
+                  coda::traceplot(y2, smooth = smooth, ...)
+                  if (missing(bwf)) coda::densplot(y2, ...) else coda::densplot(y2, bwf = bwf, ...)
+                } else{
+                    plot.new()
+                    plot.new()
+                  }
+              } else{
+                  if(colnames(x2)[i] %in% colnames(x1)){
+                    j <- match(colnames(x2)[i], colnames(x1))
+                    y1 <- coda::mcmc(as.matrix(x1)[, j, drop = FALSE], start(x1), end(x1), thin(x1))
+                    coda::traceplot(y1, smooth = smooth, ...)
+                    if (missing(bwf)) coda::densplot(y1, ...) else coda::densplot(y1, bwf = bwf, ...)
+                  } else{
+                      plot.new()
+                      plot.new()
+                    }  
+                  y2 <- coda::mcmc(as.matrix(x2)[, i, drop = FALSE], start(x2), end(x2), thin(x2))
+                  coda::traceplot(y2, smooth = smooth, ...)
+                  if (missing(bwf)) coda::densplot(y2, ...) else coda::densplot(y2, bwf = bwf, ...)
+                }
+            }
+          cnt <- cnt + 1
+          if(is.character(save) && (cnt == mfrow[1] | i == coda::nvar(x1))){
+            dev.copy(pdf, paste0("./plots/", save, "_", i-(cnt-1), "to", i, ".pdf"), w = 13, h = 9)
+            dev.off()
+          }
+
+        }
+      }
+}
 
