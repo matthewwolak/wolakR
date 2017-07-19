@@ -186,7 +186,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
   sub.title <- if(missing(sub)) "" else sub
   histout <- if(plotHist){
                graphics::hist(posterior, breaks = histbreaks, plot = FALSE)
-             } else 0 #FIXME needs to have list with density so can call `histout$density`
+             } else list(breaks = NULL, counts = NULL, density = NULL, mids = NULL)
   if(missing(ylim)){
     ylimit <- c(0, max(c(poDens$y, histout$density)))
   } else ylimit <- ylim
