@@ -4,17 +4,26 @@
 \alias{postPlot}
 \title{Posterior distribution plot.}
 \usage{
-postPlot(posterior, plotHist = TRUE, histbreaks = 100, prior = NULL,
-  prange = c("prior", "posterior"), main, sub, ylim, denslwd = 6,
-  denslty = "solid", denscol = "black", hpdlwd = 6, hpdlty = "dashed",
-  hpdcol = "black", meanlwd = 7, meanlty = "12", meancol = "red",
-  priorlwd = 3, priorlty = "solid", priorcol = "green", at1 = NULL,
-  at2 = NULL, labels1 = NULL, labels2 = NULL, ...)
+postPlot(posterior, bw = "nrd", plotHist = TRUE, histbreaks = 100,
+  prior = NULL, prange = c("prior", "posterior"), main, sub, ylim,
+  denslwd = 6, denslty = "solid", denscol = "black", hpdlwd = 6,
+  hpdlty = "dashed", hpdcol = "black", meanlwd = 7, meanlty = "12",
+  meancol = "red", priorlwd = 3, priorlty = "solid", priorcol = "green",
+  at1 = NULL, at2 = NULL, labels1 = NULL, labels2 = NULL, plot = TRUE,
+  ...)
 }
 \arguments{
 \item{posterior}{Object containing a marginal posterior distribution from
 from which kernel density estimates can be calulated by the
 \code{coda::density} function.}
+
+\item{bw}{Either a \code{numeric} or \code{character} for calculating the
+smoothing bandwidth used in the kernel density estimation. If
+\code{numeric}, the value is used as the standard deviation of the
+smoothing kernel. If \code{character}, the string is used as a standard
+rule to choose the bandwith. See details in \code{\link[stats]{density}}.
+Note that the default value \code{"nrd"} is not the default used in
+\code{\link[stats]{density}}.}
 
 \item{plotHist}{Should a histogram of the density be plotted as well.}
 
@@ -66,23 +75,24 @@ x-axis (\code{at1}) and y-axis (\code{at2}). See
 x-axis (\code{labels1}) and and y-axis (\code{labels2}). See
 \code{\link[graphics]{axis}} for details.}
 
+\item{plot}{Logical. If \code{TRUE} (default) the plotting is performed,
+otherwise the graphical output is suppressed.}
+
 \item{\dots}{Additional arguments passed to \code{densplot}, \code{hist},
 \emph{and} \code{abline}.}
 }
 \value{
-A \code{list} returned invisibly (assign to keep):
+A \code{list} returned invisibly (assign to an object to view):
   \describe{
     \item{call}{The original \code{call}.}
-    \item{postDensity}{Object of \code{class} "density" for the posterior
-      distribution.}
-    \item{priorDensity}{Object of \code{class} "density" for the prior
-      distribution.}
-    \item{bandwith}{The density bandwith from the posterior used to set some
-        the bandwith in the prior under some constraints.FIXME}
-    \item{histOut}{Object of \code{class} "histogram" for the posterior
-        distribution.}
-    \item{constraint}{A \code{character} indicating if any densities were
-        adjusted because of boundary constraints.}
+    \item{postDensity}{List containing objects describing the posterior
+ distribution. Items include a \code{character} indicating if the
+ density was adjusted because of boundary constraints, an object of
+ \code{class} "density", and an object of \code{class} "histogram".}
+    \item{priorDensity}{List containing objects describing the prior
+ distribution. Items include a \code{character} indicating if the
+ density was adjusted because of boundary constraints and an object of
+	 \code{class} "density".}
   }
 }
 \description{

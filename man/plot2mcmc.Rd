@@ -17,8 +17,11 @@ MCMC chain(s).}
 \item{bwf}{Character indicating function to calculate the bandwith. See
 \code{\link[coda]{traceplot}} for details.#TODO correspond with `postPlot()`}
 
-\item{save}{Logical indicating whether the plot should be saved as a pdf to
-the hard drive.}
+\item{save}{Either a logical or character value. When \code{FALSE} (default)
+plots are not saved to the hard drive. If \code{TRUE}, the plots are saved
+as a pdf with a default filename to the current working directory. If a
+\code{character} is specified, this will be used as the base filename to
+save the plots as pdfs in the current working directory.}
 
 \item{\dots}{Additional arguments passed to \code{densplot} and
 \code{traceplot}.#FIXME update densplot and traceplot to own functions}
