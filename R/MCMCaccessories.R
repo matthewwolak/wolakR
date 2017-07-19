@@ -188,7 +188,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
   sub.title <- if(missing(sub)) "" else sub
   histout <- if(plotHist){
                graphics::hist(posterior, breaks = histbreaks, plot = FALSE)
-             } else 0
+             } else 0 #FIXME needs to have list with density so can call `histout$density`
   if(missing(ylim)){
     ylimit <- c(0, max(c(poDens$y, histout$density)))
   } else ylimit <- ylim
@@ -317,16 +317,19 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 #FIXME issues when prior range is used on very flat parameter expanded prior
 ## Density is high near zero, so usually above posterior plot and off figure
         #XXX NOTE calculates own `bw` and does not use `width` with posterior bw
-        pr <- prior[prior >= 0 & prior <= prra[2L]*prraN]
-        pr <- c(pr, -pr, 2*prra[2L]*prraN - pr)
-        prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
-        prDens$y <- 3 * prDens$y[prDens$x >= 0 & prDens$x <= prra[2L]*prraN]
-        prDens$x <- prDens$x[prDens$x >= 0 & prDens$x <= prra[2L]*prraN]
-#        pr <- prior[prior >= 0]
-#        pr <- c(pr, -pr)
-#        prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
-#        prDens$y <- 2 * prDens$y[prDens$x >= 0]
-#        prDens$x <- prDens$x[prDens$x >= 0]
+        if(max(prior) > prra[2L]*prraN){
+          pr <- prior[prior >= 0 & prior <= prra[2L]*prraN]
+          pr <- c(pr, -pr, 2*prra[2L]*prraN - pr)
+          prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
+          prDens$y <- 3 * prDens$y[prDens$x >= 0 & prDens$x <= prra[2L]*prraN]
+          prDens$x <- prDens$x[prDens$x >= 0 & prDens$x <= prra[2L]*prraN]
+        } else{
+            pr <- prior[prior >= 0]
+            pr <- c(pr, -pr)
+            prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
+            prDens$y <- 2 * prDens$y[prDens$x >= 0]
+            prDens$x <- prDens$x[prDens$x >= 0]
+          }
       }
       if(constraint == "unbounded"){
         #XXX NOTE calculates own `bw` and does not use `width` with posterior bw
@@ -350,7 +353,9 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 	  col = priorcol, lty = priorlty, lwd = priorlwd, ...)
       }
   } else prDens <- NULL
- 
+#TODO make `postDensity` a list with `density` (instead `poDens`)
+## and `histogram` instead of `histOut`, and `constraint`. 
+### Likewise, make `priorDensity` a list with `density` and `constraint`
  return(invisible(list(call = cl,
 	postDensity = poDens, priorDensity = prDens,
 	bandwith = bw,
@@ -450,10 +455,13 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
           if(coda::nvar(x1) == coda::nvar(x2)){
             y1 <- coda::mcmc(as.matrix(x1)[, i, drop = FALSE], start(x1), 
               end(x1), thin(x1))
+            y2 <- coda::mcmc(as.matrix(x2)[, i, drop = FALSE], start(x2), end(x2), thin(x2))
+#postPlot(y1, plotHist = FALSE, prior = y2, prange = "prior")
+#postPlot(y1, prior = y2, prange = "prior")
+
             coda::traceplot(y1, smooth = smooth, ...)
             if (missing(bwf)) coda::densplot(y1, ...) else coda::densplot(y1, bwf = bwf, ...)
 
-            y2 <- coda::mcmc(as.matrix(x2)[, i, drop = FALSE], start(x2), end(x2), thin(x2))
             coda::traceplot(y2, smooth = smooth, ...)
             if (missing(bwf)) coda::densplot(y2, ...) else coda::densplot(y2, bwf = bwf, ...)
 
