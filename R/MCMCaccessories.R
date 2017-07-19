@@ -458,8 +458,9 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
           }
         cnt <- cnt + 1
         if(save && (cnt == mfrow[1] | i == coda::nvar(x1))){
-          dev.copy(pdf, paste0("./", fname, "_", i-(cnt-1), "to", i, ".pdf"), w = 7, h = 9)
+          dev.copy(pdf, paste0(fname, "_", i-(cnt-1), "to", i, ".pdf"), w = 7, h = 9)
           dev.off()
+          cat(paste0("Plots saved to: ", getwd(), "/", fname, "_", i-(cnt-1), "to", i, ".pdf"), "\n")
         } 
       }
 
@@ -600,8 +601,9 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
             }
           cnt <- cnt + 1
           if(save && (cnt == mfrow[1] | i == coda::nvar(x1))){
-            dev.copy(pdf, paste0("./", fname, "_", i-(cnt-1), "to", i, ".pdf"), w = 13, h = 9)
+            dev.copy(pdf, paste0(fname, "_", i-(cnt-1), "to", i, ".pdf"), w = 13, h = 9)
             dev.off()
+            cat(paste0("Plots saved to: ", getwd(), "/", fname, "_", i-(cnt-1), "to", i, ".pdf"), "\n")
           }
 
         }
