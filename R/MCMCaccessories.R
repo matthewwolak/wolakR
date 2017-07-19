@@ -408,8 +408,11 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
 #' @param bwf Character indicating function to calculate the bandwith. See
 #'   \code{\link[coda]{traceplot}} for details.#TODO correspond with `postPlot()`
 #'
-#' @param save Logical indicating whether the plot should be saved as a pdf to
-#'   the hard drive.
+#' @param save Either a logical or character value. When \code{FALSE} (default)
+#'   plots are not saved to the hard drive. If \code{TRUE}, the plots are saved
+#'   as a pdf with a default filename to the current working directory. If a
+#'   \code{character} is specified, this will be used as the base filename to
+#'   save the plots as pdfs in the current working directory.
 #' @param \dots Additional arguments passed to \code{densplot} and
 #'   \code{traceplot}.#FIXME update densplot and traceplot to own functions
 #'
@@ -430,6 +433,10 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
 plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
     oldpar <- NULL
     on.exit(par(oldpar))
+    if(!is.logical(save) && is.character(save)){
+      fname <- save
+      save <- TRUE
+    } else fname <- "set"
     if(is.null(x2)){
       mfrow <- coda:::set.mfrow(Nchains = nchain(x1), Nparms = coda::nvar(x1), 
           nplots = 2)
@@ -450,8 +457,8 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
           if (missing(bwf)) coda::densplot(y1, ...) else coda::densplot(y1, bwf = bwf, ...)
           }
         cnt <- cnt + 1
-        if(is.character(save) && (cnt == mfrow[1] | i == coda::nvar(x1))){
-          dev.copy(pdf, paste0("./", save, "_", i-(cnt-1), "to", i, ".pdf"), w = 7, h = 9)
+        if(save && (cnt == mfrow[1] | i == coda::nvar(x1))){
+          dev.copy(pdf, paste0("./", fname, "_", i-(cnt-1), "to", i, ".pdf"), w = 7, h = 9)
           dev.off()
         } 
       }
@@ -592,8 +599,8 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
                 }
             }
           cnt <- cnt + 1
-          if(is.character(save) && (cnt == mfrow[1] | i == coda::nvar(x1))){
-            dev.copy(pdf, paste0("./", save, "_", i-(cnt-1), "to", i, ".pdf"), w = 13, h = 9)
+          if(save && (cnt == mfrow[1] | i == coda::nvar(x1))){
+            dev.copy(pdf, paste0("./", fname, "_", i-(cnt-1), "to", i, ".pdf"), w = 13, h = 9)
             dev.off()
           }
 
