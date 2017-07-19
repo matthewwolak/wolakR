@@ -84,6 +84,14 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' @param posterior Object containing a marginal posterior distribution from
 #'   from which kernel density estimates can be calulated by the
 #'   \code{coda::density} function.
+#' @param bw Either a \code{numeric} or \code{character} for calculating the
+#'   smoothing bandwidth used in the kernel density estimation. If
+#'   \code{numeric}, the value is used as the standard deviation of the
+#'   smoothing kernel. If \code{character}, the string is used as a standard
+#'   rule to choose the bandwith. See details in \code{\link[stats]{density}}.
+#'   Note that the default value \code{"nrd"} is not the default used in
+#'   \code{\link[stats]{density}}.
+#'
 #' @param plotHist Should a histogram of the density be plotted as well.
 #' @param histbreaks If \code{plotHist = TRUE}, then the number of breaks. See
 #'   \code{\link[graphics]{hist}} for details.
@@ -168,7 +176,8 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'     prior = pepr[,4], prange = "posterior1.5") 
 #' # different scalar to get same y-intercept
 #'
-postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
+postPlot <- function(posterior, bw = "nrd",
+	plotHist = TRUE, histbreaks = 100,
 	prior = NULL, prange = c("prior", "posterior"),
 	main, sub, ylim,
 	denslwd = 6, denslty = "solid", denscol = "black",
@@ -180,7 +189,7 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 
   cl <- match.call()
   # bw.nrd() is like `bwf()` in `coda::densplot()` 
-  poDens <- stats::density(posterior, bw = "nrd", kernel = "gaussian", n = 2^13)
+  poDens <- stats::density(posterior, bw = bw, kernel = "gaussian", n = 2^13)
   bw <- poDens$bw
   main.title <- if(missing(main)) "" else main
   sub.title <- if(missing(sub)) "" else sub
@@ -454,8 +463,8 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
             y1 <- coda::mcmc(as.matrix(x1)[, i, drop = FALSE], start(x1), 
               end(x1), thin(x1))
             y2 <- coda::mcmc(as.matrix(x2)[, i, drop = FALSE], start(x2), end(x2), thin(x2))
-#postPlot(y1, plotHist = FALSE, prior = y2, prange = "prior")
-#postPlot(y1, prior = y2, prange = "prior")
+x11();str(postPlot(y1, plotHist = FALSE, prior = y2, prange = "prior", ylim = c(0, 30), xlim = c(0,1.5)))
+x11();str(postPlot(y2, plotHist = FALSE, prior = y1, prange = "prior", ylim = c(0, 30), xlim = c(0,1.5)))
 
             coda::traceplot(y1, smooth = smooth, ...)
             if (missing(bwf)) coda::densplot(y1, ...) else coda::densplot(y1, bwf = bwf, ...)
