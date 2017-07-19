@@ -176,7 +176,7 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'     prior = pepr[,4], prange = "posterior1.5") 
 #' # different scalar to get same y-intercept
 #'
-postPlot <- function(posterior, bw = "nrd",
+postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior bws?
 	plotHist = TRUE, histbreaks = 100,
 	prior = NULL, prange = c("prior", "posterior"),
 	main, sub, ylim,
