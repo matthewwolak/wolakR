@@ -444,8 +444,11 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
           end(x1), thin(x1))
 #TODO add own version of `traceplot()` (`plot` + `rug`)
         coda::traceplot(y1, smooth = smooth, ...)
-        if (missing(bwf)) coda::densplot(y1, ...) else coda::densplot(y1, bwf = bwf, ...)
-
+        if(length(unique(y1)) == 1){
+          plot.new()
+        } else{
+          if (missing(bwf)) coda::densplot(y1, ...) else coda::densplot(y1, bwf = bwf, ...)
+          }
         cnt <- cnt + 1
         if(is.character(save) && (cnt == mfrow[1] | i == coda::nvar(x1))){
           dev.copy(pdf, paste0("./", save, "_", i-(cnt-1), "to", i, ".pdf"), w = 7, h = 9)
@@ -471,23 +474,30 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
             y1 <- coda::mcmc(as.matrix(x1)[, i, drop = FALSE], start(x1), 
               end(x1), thin(x1))
             y2 <- coda::mcmc(as.matrix(x2)[, i, drop = FALSE], start(x2), end(x2), thin(x2))
-            denslist_y1y2 <- postPlot(y1, plotHist = FALSE,
+            if(length(unique(y1)) != 1 & length(unique(y2)) != 1){
+              denslist_y1y2 <- postPlot(y1, plotHist = FALSE,
 		prior = y2, prange = "prior", plot = FALSE)
-	    xlimit <- with(denslist_y1y2, range(c(postDensity$density$x,
+	      xlimit <- with(denslist_y1y2, range(c(postDensity$density$x,
 		priorDensity$density$x)))
-#	    ylimit <- with(denslist_y1y2, range(c(postDensity$density$y,
+#	      ylimit <- with(denslist_y1y2, range(c(postDensity$density$y,
 #		priorDensity$density$y)))
-
+            }
             coda::traceplot(y1, smooth = smooth, ...)
-            if(missing(bwf)){
-	      coda::densplot(y1, xlim = xlimit, ...)
-            } else coda::densplot(y1, bwf = bwf, xlim = xlimit, ...)
-
+            if(length(unique(y1)) == 1){
+              plot.new()
+            } else{
+                if(missing(bwf)){
+	          coda::densplot(y1, xlim = xlimit, ...)
+                } else coda::densplot(y1, bwf = bwf, xlim = xlimit, ...)
+              }
             coda::traceplot(y2, smooth = smooth, ...)
-            if(missing(bwf)){
-	      coda::densplot(y2, xlim = xlimit, ...)
-	    } else coda::densplot(y2, bwf = bwf, xlim = xlimit, ...)
-
+            if(length(unique(y1)) == 1){
+              plot.new()
+            } else{
+                if(missing(bwf)){
+	          coda::densplot(y2, xlim = xlimit, ...)
+	        } else coda::densplot(y2, bwf = bwf, xlim = xlimit, ...)
+              }
           } else{
               if(largerX == 1){
                 y1 <- coda::mcmc(as.matrix(x1)[, i, drop = FALSE],
@@ -497,28 +507,40 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
                   y2 <- coda::mcmc(as.matrix(x2)[, j, drop = FALSE],
 		    start(x2), end(x2), thin(x2))
 
-                  denslist_y1y2 <- postPlot(y1, plotHist = FALSE,
-		    prior = y2, prange = "prior", plot = FALSE)
-	          xlimit <- with(denslist_y1y2, range(c(postDensity$density$x,
-		    priorDensity$density$x)))
-#	          ylimit <- with(denslist_y1y2, range(c(postDensity$density$y,
-#		    priorDensity$density$y)))
-
+                  if(length(unique(y1)) != 1 & length(unique(y2)) != 1){
+                    denslist_y1y2 <- postPlot(y1, plotHist = FALSE,
+		      prior = y2, prange = "prior", plot = FALSE)
+	            xlimit <- with(denslist_y1y2, range(c(postDensity$density$x,
+		      priorDensity$density$x)))
+#	            ylimit <- with(denslist_y1y2, range(c(postDensity$density$y,
+#		      priorDensity$density$y)))
+                  }
 		  #TODO use own version
                   coda::traceplot(y1, smooth = smooth, ...)
-                  if(missing(bwf)){
-	            coda::densplot(y1, xlim = xlimit, ...)
-                  } else coda::densplot(y1, bwf = bwf, xlim = xlimit, ...)
+                  if(length(unique(y1)) == 1){
+                    plot.new()
+                  } else{
+                      if(missing(bwf)){
+	                coda::densplot(y1, xlim = xlimit, ...)
+                      } else coda::densplot(y1, bwf = bwf, xlim = xlimit, ...)
+                    }
                   coda::traceplot(y2, smooth = smooth, ...)
-                  if(missing(bwf)){
-	            coda::densplot(y2, xlim = xlimit, ...)
-	          } else coda::densplot(y2, bwf = bwf, xlim = xlimit, ...)
-
+                  if(length(unique(y2)) == 1){
+                    plot.new()
+                  } else{
+                      if(missing(bwf)){
+	                coda::densplot(y2, xlim = xlimit, ...)
+	              } else coda::densplot(y2, bwf = bwf, xlim = xlimit, ...)
+                    }
                 } else{
                     coda::traceplot(y1, smooth = smooth, ...)
-                    if(missing(bwf)){
-	              coda::densplot(y1, ...)
-                    } else coda::densplot(y1, bwf = bwf, ...)
+                    if(length(unique(y1)) == 1){
+                      plot.new()
+                    } else{
+                        if(missing(bwf)){
+	                  coda::densplot(y1, ...)
+                        } else coda::densplot(y1, bwf = bwf, ...)
+                      }
                     plot.new()
                     plot.new()
                   }
@@ -530,28 +552,42 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
                     j <- match(colnames(x2)[i], colnames(x1))
                     y1 <- coda::mcmc(as.matrix(x1)[, j, drop = FALSE],
 		      start(x1), end(x1), thin(x1))
-
-                  denslist_y1y2 <- postPlot(y1, plotHist = FALSE,
-		    prior = y2, prange = "prior", plot = FALSE)
-	          xlimit <- with(denslist_y1y2, range(c(postDensity$density$x,
-		    priorDensity$density$x)))
-#	          ylimit <- with(denslist_y1y2, range(c(postDensity$density$y,
-#		    priorDensity$density$y)))
-
+ 
+                    if(length(unique(y1)) != 1 & length(unique(y2)) != 1){
+                      denslist_y1y2 <- postPlot(y1, plotHist = FALSE,
+		        prior = y2, prange = "prior", plot = FALSE)
+	              xlimit <- with(denslist_y1y2, range(c(postDensity$density$x,
+		        priorDensity$density$x)))
+#	              ylimit <- with(denslist_y1y2, range(c(postDensity$density$y,
+#		        priorDensity$density$y)))
+                    }
                     coda::traceplot(y1, smooth = smooth, ...)
-                    if(missing(bwf)){
-		      coda::densplot(y1, xlim = xlimit, ...)
-		    } else coda::densplot(y1, bwf = bwf, xlim = xlimit, ...)
-                    if(missing(bwf)){
-		      coda::densplot(y2, xlim = xlimit, ...)
-		    } else coda::densplot(y2, bwf = bwf, xlim = xlimit, ...)
+                    if(length(unique(y1)) == 1){
+                      plot.new()
+                    } else{
+                        if(missing(bwf)){
+		          coda::densplot(y1, xlim = xlimit, ...)
+		        } else coda::densplot(y1, bwf = bwf, xlim = xlimit, ...)
+                      }
+                    coda::traceplot(y2, smooth = smooth, ...)
+                    if(length(unique(y2)) == 1){
+                      plot.new()
+                    } else{
+                        if(missing(bwf)){
+		          coda::densplot(y2, xlim = xlimit, ...)
+		        } else coda::densplot(y2, bwf = bwf, xlim = xlimit, ...)
+                      }
                   } else{
                       plot.new()
                       plot.new()
                       coda::traceplot(y2, smooth = smooth, ...)
-                      if(missing(bwf)){
-		        coda::densplot(y2, ...)
-		      } else coda::densplot(y2, bwf = bwf, ...)
+                      if(length(unique(y2)) == 1){
+                        plot.new()
+                      } else{
+                          if(missing(bwf)){
+		            coda::densplot(y2, ...)
+		          } else coda::densplot(y2, bwf = bwf, ...)
+                        }
                     }  
                 }
             }
