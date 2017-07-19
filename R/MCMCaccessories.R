@@ -448,7 +448,7 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
 
         cnt <- cnt + 1
         if(is.character(save) && (cnt == mfrow[1] | i == coda::nvar(x1))){
-          dev.copy(pdf, paste0("./plots/", save, "_", i-(cnt-1), "to", i, ".pdf"), w = 7, h = 9)
+          dev.copy(pdf, paste0("./", save, "_", i-(cnt-1), "to", i, ".pdf"), w = 7, h = 9)
           dev.off()
         } 
       }
@@ -460,7 +460,7 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
             nplots = 2)
         mfrow[2] <- 4
 
-        for (i in 1:nvar_x1x2) {
+        for(i in 1:nvar_x1x2){
           if(i %in% seq(from = 1, to = nvar_x1x2, by = mfrow[1])){
              x11(w = 13, h = 9)
               par(mfrow = mfrow)
@@ -557,7 +557,7 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
             }
           cnt <- cnt + 1
           if(is.character(save) && (cnt == mfrow[1] | i == coda::nvar(x1))){
-            dev.copy(pdf, paste0("./plots/", save, "_", i-(cnt-1), "to", i, ".pdf"), w = 13, h = 9)
+            dev.copy(pdf, paste0("./", save, "_", i-(cnt-1), "to", i, ".pdf"), w = 13, h = 9)
             dev.off()
           }
 
