@@ -128,19 +128,17 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' @param \dots Additional arguments passed to \code{densplot}, \code{hist},
 #'   \emph{and} \code{abline}.
 #'
-#' @return A \code{list} returned invisibly (assign to keep):
+#' @return A \code{list} returned invisibly (assign to an object to view):
 #'   \describe{
 #'     \item{call}{The original \code{call}.}
-#'     \item{postDensity}{Object of \code{class} "density" for the posterior
-#'       distribution.}
-#'     \item{priorDensity}{Object of \code{class} "density" for the prior
-#'       distribution.}
-#'     \item{bandwith}{The density bandwith from the posterior used to set some
-#'         the bandwith in the prior under some constraints.FIXME}
-#'     \item{histOut}{Object of \code{class} "histogram" for the posterior
-#'         distribution.}
-#'     \item{constraint}{A \code{character} indicating if any densities were
-#'         adjusted because of boundary constraints.}
+#'     \item{postDensity}{List containing objects describing the posterior
+#'	 distribution. Items include a \code{character} indicating if the
+#'	 density was adjusted because of boundary constraints, an object of
+#'	 \code{class} "density", and an object of \code{class} "histogram".}
+#'     \item{priorDensity}{List containing objects describing the prior
+#'	 distribution. Items include a \code{character} indicating if the
+#'	 density was adjusted because of boundary constraints and an object of
+#' 	 \code{class} "density".}
 #'   }
 #'
 #' @author \email{matthewwolak@@gmail.com}
@@ -353,14 +351,14 @@ postPlot <- function(posterior, plotHist = TRUE, histbreaks = 100,
 	  col = priorcol, lty = priorlty, lwd = priorlwd, ...)
       }
   } else prDens <- NULL
-#TODO make `postDensity` a list with `density` (instead `poDens`)
-## and `histogram` instead of `histOut`, and `constraint`. 
-### Likewise, make `priorDensity` a list with `density` and `constraint`
+
  return(invisible(list(call = cl,
-	postDensity = poDens, priorDensity = prDens,
-	bandwith = bw,
-	histOut = histout,
-	constraint = constraint)))
+	postDensity = list(constraint = constraint,
+		density = poDens,
+		histogram = histout),
+	priorDensity = list(constraint = constraint,
+		density = prDens)
+	)))
 	
 }
 
