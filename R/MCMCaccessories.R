@@ -133,6 +133,8 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' @param labels1,labels2 Labels to be placed at the tick-marks of the
 #'   x-axis (\code{labels1}) and and y-axis (\code{labels2}). See
 #'   \code{\link[graphics]{axis}} for details.
+#' @param plot Logical. If \code{TRUE} (default) the plotting is performed,
+#'   otherwise the graphical output is suppressed. 
 #' @param \dots Additional arguments passed to \code{densplot}, \code{hist},
 #'   \emph{and} \code{abline}.
 #'
@@ -185,7 +187,8 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
 	meanlwd = 7, meanlty = "12", meancol = "red",
 	priorlwd = 3, priorlty = "solid", priorcol = "green",
 	at1 = NULL, at2 = NULL,
-	labels1 = NULL, labels2 = NULL, ...){
+	labels1 = NULL, labels2 = NULL,
+	plot = TRUE, ...){
 
   cl <- match.call()
   # bw.nrd() is like `bwf()` in `coda::densplot()` 
@@ -247,17 +250,20 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
     poDens$y <- 2 * poDens$y[poDens$x >= 0]
     poDens$x <- poDens$x[poDens$x >= 0]
   }
-  plot(poDens, type = "n", axes = FALSE,
+
+  if(plot){
+    plot(poDens, type = "n", axes = FALSE,
 	main = main.title, sub = sub.title, ylim = ylimit, ...)
-  graphics::lines(poDens, lwd = denslwd, ...)
-  if(plotHist) graphics::hist(posterior, breaks = histbreaks, freq = FALSE,
+    graphics::lines(poDens, lwd = denslwd, ...)
+    if(plotHist) graphics::hist(posterior, breaks = histbreaks, freq = FALSE,
 	add = TRUE, ...)
-  graphics::abline(v = coda::HPDinterval(posterior),
+    graphics::abline(v = coda::HPDinterval(posterior),
 	lty = hpdlty, lwd = hpdlwd, col = hpdcol, ...)
-  graphics::abline(v = mean(posterior),
+    graphics::abline(v = mean(posterior),
 	col = meancol, lty = meanlty, lwd = meanlwd, ...)
-  axis(1, at = at1, labels = labels1)
-  axis(2, at = at2, labels = labels2)
+    axis(1, at = at1, labels = labels1)
+    axis(2, at = at2, labels = labels2)
+  }
 
   #######
   # Prior
@@ -356,8 +362,10 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
       warning("prior is not a `list` or `mcmc` object - no prior added to plot")
     } else{
     # Add prior density to plot
-        graphics::lines(prDens,
-	  col = priorcol, lty = priorlty, lwd = priorlwd, ...)
+        if(plot){
+          graphics::lines(prDens,
+	    col = priorcol, lty = priorlty, lwd = priorlwd, ...)
+        }
       }
   } else prDens <- NULL
 
