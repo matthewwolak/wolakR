@@ -211,13 +211,14 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
     if(min(po) >= 0 && min(po) < 2 * bw){
       constraint <- "zero-one"
       po <- c(po, -po, 2 - po)
-    } 
-    if(min(po) < 0 && 1 + min(po) < 2 * bw){
-      constraint <- "correlation"
-      po <- c(po, -2 - po, 2 - po)
     } else{
-        constraint <- "upbound1"  #<-- most likely correlation converge on 1
-        po <- c(po, 2-po)
+        if(min(po) < 0 && 1 + min(po) < 2 * bw){
+          constraint <- "correlation"
+          po <- c(po, -2 - po, 2 - po)
+        } else{
+            constraint <- "upbound1"  #<-- most likely correlation converge on 1
+            po <- c(po, 2-po)
+          }
       }
   } else{
       if(min(po) >= 0 && min(po) < 2 * bw){
