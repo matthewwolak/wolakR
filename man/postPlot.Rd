@@ -30,7 +30,7 @@ Note that the default value \code{"nrd"} is not the default used in
 \item{histbreaks}{If \code{plotHist = TRUE}, then the number of breaks. See
 \code{\link[graphics]{hist}} for details.}
 
-\item{prior}{The prior distribution for a line be added to the plot. If
+\item{prior}{The prior distribution for a line to be added to the plot. If
 \code{NULL} (the default) then no line is added. A prior is plotted if
 either a \code{\link[coda]{mcmc}} object or \code{list} with the prior 
 density is supplied. See Details.}
