@@ -332,30 +332,35 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
       if(constraint == "positive"){
 #FIXME issues when prior range is used on very flat parameter expanded prior
 ## Density is high near zero, so usually above posterior plot and off figure
-        #XXX NOTE calculates own `bw` and does not use `width` with posterior bw
+        #XXX NOTE if problem occurs, consider calculate own `bw` and not use
+        ## `width` with posterior bw (see commented code below)
         if(max(prior) > prra[2L]*prraN){
           pr <- prior[prior >= 0 & prior <= prra[2L]*prraN]
           pr <- c(pr, -pr, 2*prra[2L]*prraN - pr)
-          prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
+#          prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
+          prDens <- stats::density(pr, kernel = "gaussian", width = 4 * bw, n = 2^13)
           prDens$y <- 3 * prDens$y[prDens$x >= 0 & prDens$x <= prra[2L]*prraN]
           prDens$x <- prDens$x[prDens$x >= 0 & prDens$x <= prra[2L]*prraN]
         } else{
             pr <- prior[prior >= 0]
             pr <- c(pr, -pr)
-            prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
+#            prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
+            prDens <- stats::density(pr, kernel = "gaussian", width = 4 * bw, n = 2^13)
             prDens$y <- 2 * prDens$y[prDens$x >= 0]
             prDens$x <- prDens$x[prDens$x >= 0]
           }
       }
       if(constraint == "unbounded"){
-        #XXX NOTE calculates own `bw` and does not use `width` with posterior bw
+        #XXX NOTE if problem occurs, consider calculate own `bw` and not use
+        ## `width` with posterior bw (see commented code below)
         if(prra[1L] < 0) prra[1L] <- prra[1L] * prraN
         if(prra[1L] >= 0) prra[1L] <- prra[1L] * (1/prraN)
         if(prra[2L] < 0) prra[2L] <- prra[2L] * (1/prraN)
         if(prra[2L] >= 0) prra[2L] <- prra[2L] * prraN
         pr <- prior[prior >= prra[1L] & prior <= prra[2L]]
         pr <- c(pr, 2*prra[1L] - pr, 2*prra[2L] - pr)
-        prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
+#        prDens <- stats::density(pr, bw = "nrd", kernel = "gaussian", n = 2^13)
+        prDens <- stats::density(pr, kernel = "gaussian", width = 4 * bw, n = 2^13)
         prDens$y <- 3 * prDens$y[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
         prDens$x <- prDens$x[prDens$x >= prra[1L] & prDens$x <= prra[2L]]
       }
