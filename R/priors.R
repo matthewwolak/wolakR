@@ -20,6 +20,8 @@
 #'
 #' @aliases dIW
 #' @export
+#' @importFrom MCMCpack dinvgamma
+#' 
 #' @param x Vector of quantiles.
 #' @param V Numeric matrix of the expected (co)variances
 #' @param nu Numeric for the degree of belief parameter for the inverse-
