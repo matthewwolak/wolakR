@@ -75,7 +75,7 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'
 #' @section Warning:
 #' The use of the \dots argument is untested. Arguments of the same name that
-#' are shared among \code{densplot}, \code{hist}, or \code{abline} will affect
+#' are shared among \code{densplot}, \code{hist}, or \code{lines} will affect
 #' each of these aspects of the plot if supplied to \code{postPlot}. Proceed
 #' with caution!
 #'
@@ -136,7 +136,7 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' @param plot Logical. If \code{TRUE} (default) the plotting is performed,
 #'   otherwise the graphical output is suppressed. 
 #' @param \dots Additional arguments passed to \code{densplot}, \code{hist},
-#'   \emph{and} \code{abline}.
+#'   \emph{and} \code{lines}.
 #'
 #' @return A \code{list} returned invisibly (assign to an object to view):
 #'   \describe{
@@ -260,9 +260,11 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
     graphics::lines(poDens, lwd = denslwd, ...)
     if(plotHist) graphics::hist(posterior, breaks = histbreaks, freq = FALSE,
 	add = TRUE, ...)
-    graphics::abline(v = coda::HPDinterval(posterior),
-	lty = hpdlty, lwd = hpdlwd, col = hpdcol, ...)
-    graphics::abline(v = mean(posterior),
+    nout <- sapply(coda::HPDinterval(posterior), FUN = function(x){(
+	graphics::lines(x = rep(x, 2), y = ylimit,
+	  lty = hpdlty, lwd = hpdlwd, col = hpdcol, ...)
+      )})
+    graphics::lines(x = rep(mean(posterior), 2), y = ylimit,
 	col = meancol, lty = meanlty, lwd = meanlwd, ...)
     axis(1, at = at1, labels = labels1)
     axis(2, at = at2, labels = labels2)
