@@ -199,8 +199,9 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
   histout <- if(plotHist){
                graphics::hist(posterior, breaks = histbreaks, plot = FALSE)
              } else list(breaks = NULL, counts = NULL, density = NULL, mids = NULL)
+  maxYhistpoDens <- max(c(poDens$y, histout$density))
   if(missing(ylim)){
-    ylimit <- c(0, max(c(poDens$y, histout$density)))
+    ylimit <- c(0, maxYhistpoDens)
   } else ylimit <- ylim
 
   # Adjust density at boundaries
@@ -260,11 +261,13 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
     graphics::lines(poDens, lwd = denslwd, ...)
     if(plotHist) graphics::hist(posterior, breaks = histbreaks, freq = FALSE,
 	add = TRUE, ...)
+    yaxmax <- max(c(at2, par("yaxp")[2]))
+    lineylim <- ifelse(yaxmax >= maxYhistpoDens, yaxmax, maxYhistpoDens)
     nout <- sapply(coda::HPDinterval(posterior), FUN = function(x){(
-	graphics::lines(x = rep(x, 2), y = ylimit,
+	graphics::lines(x = rep(x, 2), y = c(ylimit[1], lineylim),
 	  lty = hpdlty, lwd = hpdlwd, col = hpdcol, ...)
       )})
-    graphics::lines(x = rep(mean(posterior), 2), y = ylimit,
+    graphics::lines(x = rep(mean(posterior), 2), y = c(ylimit[1], lineylim),
 	col = meancol, lty = meanlty, lwd = meanlwd, ...)
     axis(1, at = at1, labels = labels1)
     axis(2, at = at2, labels = labels2)
@@ -373,7 +376,10 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
     } else{
     # Add prior density to plot
         if(plot){
-          graphics::lines(prDens,
+	  # to keep asymptotically increasing priors from 'running away'
+          ##TODO check the following restriction for lots of different priors
+          prDensSub <- which(prDens$y <= lineylim)
+          graphics::lines(prDens$y[prDensSub] ~ prDens$x[prDensSub],
 	    col = priorcol, lty = priorlty, lwd = priorlwd, ...)
         }
       }
