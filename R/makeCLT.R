@@ -39,7 +39,7 @@ makeCLT <- function(n, m){
 	a_x = NA,
 	d_x = NA,
 	q_x = NA,
-	m_x = ifelse(length(n) == length(m), m, c(m, NA)))
+	m_x = if(length(n) == length(m)) m else c(m, NA))
  return(structure(clt, class = c("CLT", "data.frame")))
 }
 
