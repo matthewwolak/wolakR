@@ -94,7 +94,7 @@ axFun <- function(x, ...){
 #' @method axFun CLT
 #' @export
   axFun.CLT <- function(x){
-    n <- x$n_vec
+    n <- x$n_x
     N <- length(n)
     x$a_x <- c(sapply(seq(1, N-1, 1), FUN = function(i){ n[i+1] / n[i]}), NA)
    return(x)
@@ -120,7 +120,7 @@ dxFun <- function(x, ...){
 #' @method dxFun CLT
 #' @export
   dxFun.CLT <- function(x){
-    n <- n_vec
+    n <- n_x
     N <- length(n)
     x$d_x <- c(sapply(seq(1, N-1, 1), FUN = function(i){ n[i] - n[i+1]}), NA)
    return(x)
@@ -145,7 +145,7 @@ qxFun <- function(x, ...){
 #' @method qxFun CLT
 #' @export
   qxFun.CLT <- function(x){
-    x$q_x <- 1 - x$a_vec
+    x$q_x <- 1 - x$a_x
    return(x)
   }
     
