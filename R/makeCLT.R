@@ -120,7 +120,7 @@ dxFun <- function(x, ...){
 #' @method dxFun CLT
 #' @export
   dxFun.CLT <- function(x){
-    n <- n_x
+    n <- x$n_x
     N <- length(n)
     x$d_x <- c(sapply(seq(1, N-1, 1), FUN = function(i){ n[i] - n[i+1]}), NA)
    return(x)
