@@ -47,3 +47,4 @@ Other prior functions: \code{\link{dIW}}
 \author{
 \email{matthewwolak@gmail.com}
 }
+\concept{prior functions}

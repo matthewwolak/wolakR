@@ -57,3 +57,4 @@ Other MCMC posterior distribution helper functions: \code{\link{postPlot}},
 \author{
 \email{matthewwolak@gmail.com}
 }
+\concept{MCMC posterior distribution helper functions}

@@ -8,9 +8,9 @@ postPlot(posterior, bw = "nrd", plotHist = TRUE, histbreaks = 100,
   prior = NULL, prange = c("prior", "posterior"), main, sub, ylim,
   denslwd = 6, denslty = "solid", denscol = "black", hpdlwd = 6,
   hpdlty = "dashed", hpdcol = "black", meanlwd = 7, meanlty = "12",
-  meancol = "red", priorlwd = 3, priorlty = "solid", priorcol = "green",
-  at1 = NULL, at2 = NULL, labels1 = NULL, labels2 = NULL, plot = TRUE,
-  ...)
+  meancol = "red", priorlwd = 3, priorlty = "solid",
+  priorcol = "green", at1 = NULL, at2 = NULL, labels1 = NULL,
+  labels2 = NULL, plot = TRUE, ...)
 }
 \arguments{
 \item{posterior}{Object containing a marginal posterior distribution from
@@ -79,7 +79,7 @@ x-axis (\code{labels1}) and and y-axis (\code{labels2}). See
 otherwise the graphical output is suppressed.}
 
 \item{\dots}{Additional arguments passed to \code{densplot}, \code{hist},
-\emph{and} \code{abline}.}
+\emph{and} \code{lines}.}
 }
 \value{
 A \code{list} returned invisibly (assign to an object to view):
@@ -128,7 +128,7 @@ If the prior is of class \code{mcmc} then the argument \code{prange} can be
 \section{Warning}{
 
 The use of the \dots argument is untested. Arguments of the same name that
-are shared among \code{densplot}, \code{hist}, or \code{abline} will affect
+are shared among \code{densplot}, \code{hist}, or \code{lines} will affect
 each of these aspects of the plot if supplied to \code{postPlot}. Proceed
 with caution!
 }
@@ -167,3 +167,4 @@ Other MCMC posterior distribution helper functions: \code{\link{plot2mcmc}},
 \author{
 \email{matthewwolak@gmail.com}
 }
+\concept{MCMC posterior distribution helper functions}

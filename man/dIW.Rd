@@ -89,3 +89,4 @@ Other prior functions: \code{\link{rpeIW}}
 \author{
 \email{matthewwolak@gmail.com}
 }
+\concept{prior functions}

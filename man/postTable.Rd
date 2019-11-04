@@ -44,3 +44,4 @@ Other MCMC posterior distribution helper functions: \code{\link{plot2mcmc}},
 \author{
 \email{matthewwolak@gmail.com}
 }
+\concept{MCMC posterior distribution helper functions}
