@@ -5,12 +5,12 @@
 \title{Posterior distribution plot.}
 \usage{
 postPlot(posterior, bw = "nrd", plotHist = TRUE, histbreaks = 100,
-  prior = NULL, prange = c("prior", "posterior"), main, sub, ylim,
-  denslwd = 6, denslty = "solid", denscol = "black", hpdlwd = 6,
-  hpdlty = "dashed", hpdcol = "black", meanlwd = 7, meanlty = "12",
-  meancol = "red", priorlwd = 3, priorlty = "solid",
-  priorcol = "green", at1 = NULL, at2 = NULL, labels1 = NULL,
-  labels2 = NULL, plot = TRUE, ...)
+  histcol = NULL, prior = NULL, prange = c("prior", "posterior"),
+  main, sub, ylim, denslwd = 6, denslty = "solid", denscol = "black",
+  hpdlwd = 6, hpdlty = "dashed", hpdcol = "black", meanlwd = 7,
+  meanlty = "12", meancol = "red", priorlwd = 3,
+  priorlty = "solid", priorcol = "green", at1 = NULL, at2 = NULL,
+  labels1 = NULL, labels2 = NULL, plot = TRUE, ...)
 }
 \arguments{
 \item{posterior}{Object containing a marginal posterior distribution from
@@ -62,9 +62,10 @@ representing the kernel density estimate (\code{denslty}), credible
 interval limits (\code{hpdlty}), or posterior mean (\code{meanlty}). See
 \code{\link[graphics]{par}} for details.}
 
-\item{denscol, hpdcol, meancol, priorcol}{The line colors for the lines to be plotted
-representing the kernel density estimate (\code{denscol}), credible
-interval limits (\code{hpdcol}), or posterior mean (\code{meancol}). See
+\item{denscol, hpdcol, meancol, priorcol, histcol}{The line colors for the lines
+to be plotted representing the kernel density estimate (\code{denscol}),
+credible interval limits (\code{hpdcol}), posterior mean (\code{meancol}),
+prior density (\code{priorcol}), or histogram fill (\code{histcol}). See
 \code{\link[graphics]{par}} for details.}
 
 \item{at1, at2}{The points at which tick-marks are to be drawn on the

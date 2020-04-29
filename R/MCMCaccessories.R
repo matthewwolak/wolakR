@@ -123,9 +123,10 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'   representing the kernel density estimate (\code{denslty}), credible
 #'   interval limits (\code{hpdlty}), or posterior mean (\code{meanlty}). See
 #'   \code{\link[graphics]{par}} for details. 
-#' @param denscol,hpdcol,meancol,priorcol The line colors for the lines to be plotted
-#'   representing the kernel density estimate (\code{denscol}), credible
-#'   interval limits (\code{hpdcol}), or posterior mean (\code{meancol}). See
+#' @param denscol,hpdcol,meancol,priorcol,histcol The line colors for the lines
+#'   to be plotted representing the kernel density estimate (\code{denscol}),
+#'   credible interval limits (\code{hpdcol}), posterior mean (\code{meancol}),
+#'   prior density (\code{priorcol}), or histogram fill (\code{histcol}). See
 #'   \code{\link[graphics]{par}} for details.
 #' @param at1,at2 The points at which tick-marks are to be drawn on the
 #'   x-axis (\code{at1}) and y-axis (\code{at2}). See
@@ -179,7 +180,7 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' # different scalar to get same y-intercept
 #'
 postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior bws?
-	plotHist = TRUE, histbreaks = 100,
+	plotHist = TRUE, histbreaks = 100, histcol = NULL,
 	prior = NULL, prange = c("prior", "posterior"),
 	main, sub, ylim,
 	denslwd = 6, denslty = "solid", denscol = "black",
@@ -258,8 +259,9 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
   if(plot){
     plot(poDens, type = "n", axes = FALSE,
 	main = main.title, sub = sub.title, ylim = ylimit, ...)
-    graphics::lines(poDens, lwd = denslwd, ...)
-    if(plotHist) graphics::hist(posterior, breaks = histbreaks, freq = FALSE,
+    graphics::lines(poDens, lwd = denslwd, col = denscol, ...)
+    if(plotHist) graphics::hist(posterior, breaks = histbreaks, col = histcol,
+	freq = FALSE,
 	add = TRUE, ...)
     yaxmax <- max(c(at2, par("yaxp")[2]))
     lineylim <- ifelse(yaxmax >= maxYhistpoDens, yaxmax, maxYhistpoDens)
