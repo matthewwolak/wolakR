@@ -259,10 +259,10 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
   if(plot){
     plot(poDens, type = "n", axes = FALSE,
 	main = main.title, sub = sub.title, ylim = ylimit, ...)
-    graphics::lines(poDens, lwd = denslwd, col = denscol, ...)
     if(plotHist) graphics::hist(posterior, breaks = histbreaks, col = histcol,
 	freq = FALSE,
 	add = TRUE, ...)
+    graphics::lines(poDens, lwd = denslwd, col = denscol, ...)
     yaxmax <- max(c(at2, par("yaxp")[2]))
     lineylim <- ifelse(yaxmax >= maxYhistpoDens, yaxmax, maxYhistpoDens)
     nout <- sapply(coda::HPDinterval(posterior), FUN = function(x){(
