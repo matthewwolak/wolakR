@@ -468,7 +468,10 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
         y1 <- coda::mcmc(as.matrix(x1)[, i, drop = FALSE], start(x1), 
           end(x1), thin(x1))
 #TODO add own version of `traceplot()` (`plot` + `rug`)
-        coda::traceplot(y1, smooth = smooth, ...)
+#        coda::traceplot(y1, smooth = smooth, ...)
+        coda::traceplot(y1, smooth = smooth,
+          main = paste("Trace of", dimnames(y1)[[2]],
+            "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
         if(length(unique(y1)) == 1){
           plot.new()
         } else{
@@ -508,7 +511,10 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
 #	      ylimit <- with(denslist_y1y2, range(c(postDensity$density$y,
 #		priorDensity$density$y)))
             }
-            coda::traceplot(y1, smooth = smooth, ...)
+#            coda::traceplot(y1, smooth = smooth, ...)
+            coda::traceplot(y1, smooth = smooth,
+              main = paste("Trace of", dimnames(y1)[[2]],
+                "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
             if(length(unique(y1)) == 1){
               plot.new()
             } else{
@@ -516,7 +522,10 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
 	          coda::densplot(y1, xlim = xlimit, ...)
                 } else coda::densplot(y1, bwf = bwf, xlim = xlimit, ...)
               }
-            coda::traceplot(y2, smooth = smooth, ...)
+#            coda::traceplot(y2, smooth = smooth, ...)
+            coda::traceplot(y2, smooth = smooth,
+              main = paste("Trace of", dimnames(y1)[[2]],
+                "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
             if(length(unique(y1)) == 1){
               plot.new()
             } else{
@@ -542,7 +551,10 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
 #		      priorDensity$density$y)))
                   }
 		  #TODO use own version
-                  coda::traceplot(y1, smooth = smooth, ...)
+#                  coda::traceplot(y1, smooth = smooth, ...)
+                  coda::traceplot(y1, smooth = smooth,
+                    main = paste("Trace of", dimnames(y1)[[2]],
+                     "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
                   if(length(unique(y1)) == 1){
                     plot.new()
                   } else{
@@ -550,7 +562,10 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
 	                coda::densplot(y1, xlim = xlimit, ...)
                       } else coda::densplot(y1, bwf = bwf, xlim = xlimit, ...)
                     }
-                  coda::traceplot(y2, smooth = smooth, ...)
+#                  coda::traceplot(y2, smooth = smooth, ...)
+                  coda::traceplot(y2, smooth = smooth,
+                    main = paste("Trace of", dimnames(y1)[[2]],
+                     "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
                   if(length(unique(y2)) == 1){
                     plot.new()
                   } else{
@@ -559,7 +574,10 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
 	              } else coda::densplot(y2, bwf = bwf, xlim = xlimit, ...)
                     }
                 } else{
-                    coda::traceplot(y1, smooth = smooth, ...)
+#                    coda::traceplot(y1, smooth = smooth, ...)
+                    coda::traceplot(y1, smooth = smooth,
+                      main = paste("Trace of", dimnames(y1)[[2]],
+                        "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
                     if(length(unique(y1)) == 1){
                       plot.new()
                     } else{
@@ -587,7 +605,10 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
 #	              ylimit <- with(denslist_y1y2, range(c(postDensity$density$y,
 #		        priorDensity$density$y)))
                     }
-                    coda::traceplot(y1, smooth = smooth, ...)
+#                    coda::traceplot(y1, smooth = smooth, ...)
+                    coda::traceplot(y1, smooth = smooth,
+                      main = paste("Trace of", dimnames(y1)[[2]],
+                       "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
                     if(length(unique(y1)) == 1){
                       plot.new()
                     } else{
@@ -595,7 +616,10 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
 		          coda::densplot(y1, xlim = xlimit, ...)
 		        } else coda::densplot(y1, bwf = bwf, xlim = xlimit, ...)
                       }
-                    coda::traceplot(y2, smooth = smooth, ...)
+#                    coda::traceplot(y2, smooth = smooth, ...)
+                    coda::traceplot(y2, smooth = smooth,
+                      main = paste("Trace of", dimnames(y1)[[2]],
+                       "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
                     if(length(unique(y2)) == 1){
                       plot.new()
                     } else{
@@ -606,7 +630,10 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
                   } else{
                       plot.new()
                       plot.new()
-                      coda::traceplot(y2, smooth = smooth, ...)
+#                      coda::traceplot(y2, smooth = smooth, ...)
+                      coda::traceplot(y2, smooth = smooth,
+                        main = paste("Trace of", dimnames(y1)[[2]],
+                          "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
                       if(length(unique(y2)) == 1){
                         plot.new()
                       } else{
