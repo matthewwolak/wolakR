@@ -417,7 +417,6 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
 #' trouble where vastly different objects are in each of the two MCMC objects.
 
 #' @aliases plot2mcmc
-#' @export
 #' @param x1 Object of class \code{mcmc} containing MCMC chain(s).
 #' @param x2 Optional object of class \code{mcmc} containing a second set of
 #'   MCMC chain(s).
@@ -448,6 +447,7 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
 #' normMCMC2 <- coda::mcmc(matrix(c(abs(rnorm(1000, 0.2, 1)), rnorm(1000, 10, 1)),
 #'	ncol = 2))
 #' plot2mcmc(normMCMC, normMCMC2)
+#' @export
 plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
     oldpar <- NULL
     on.exit(par(oldpar))
