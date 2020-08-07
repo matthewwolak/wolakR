@@ -525,7 +525,7 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
 #            coda::traceplot(y2, smooth = smooth, ...)
             coda::traceplot(y2, smooth = smooth,
               main = paste("Trace of", dimnames(y1)[[2]],
-                "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
+                "\nAutocorrelation =", round(autocorr.diag(y2)[2,], 2)), ...)
             if(length(unique(y1)) == 1){
               plot.new()
             } else{
@@ -565,7 +565,7 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
 #                  coda::traceplot(y2, smooth = smooth, ...)
                   coda::traceplot(y2, smooth = smooth,
                     main = paste("Trace of", dimnames(y1)[[2]],
-                     "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
+                     "\nAutocorrelation =", round(autocorr.diag(y2)[2,], 2)), ...)
                   if(length(unique(y2)) == 1){
                     plot.new()
                   } else{
@@ -619,7 +619,7 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
 #                    coda::traceplot(y2, smooth = smooth, ...)
                     coda::traceplot(y2, smooth = smooth,
                       main = paste("Trace of", dimnames(y1)[[2]],
-                       "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
+                       "\nAutocorrelation =", round(autocorr.diag(y2)[2,], 2)), ...)
                     if(length(unique(y2)) == 1){
                       plot.new()
                     } else{
@@ -633,7 +633,7 @@ plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
 #                      coda::traceplot(y2, smooth = smooth, ...)
                       coda::traceplot(y2, smooth = smooth,
                         main = paste("Trace of", dimnames(y1)[[2]],
-                          "\nAutocorrelation =", round(autocorr.diag(y1)[2,], 2)), ...)
+                          "\nAutocorrelation =", round(autocorr.diag(y2)[2,], 2)), ...)
                       if(length(unique(y2)) == 1){
                         plot.new()
                       } else{
