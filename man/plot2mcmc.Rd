@@ -51,8 +51,9 @@ plot2mcmc(normMCMC, normMCMC2)
 \seealso{
 \code{postPlot} and \code{\link[coda]{densplot}}
 
-Other MCMC posterior distribution helper functions: \code{\link{postPlot}},
-  \code{\link{postTable}}
+Other MCMC posterior distribution helper functions: 
+\code{\link{postPlot}()},
+\code{\link{postTable}()}
 }
 \author{
 \email{matthewwolak@gmail.com}

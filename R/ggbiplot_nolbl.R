@@ -37,6 +37,9 @@
 #' @param alpha           alpha transparency value for the points (0 = transparent, 1 = opaque)
 #' @param circle          draw a correlation circle? (only applies when prcomp was called with scale = TRUE and when var.scale = 1)
 #' @param var.axes        draw arrows for the variables?
+#' @param var.ax.col	 specify the color of the variable arrows
+#' @param var.ax.lbl	 choose whether or not to add text labels of variable
+#'                        arrows
 #' @param varname.size    size of the text for variable names
 #' @param varname.adjust  adjustment factor the placement of the variable names, >= 1 means farther from the arrow
 #' @param varname.abbrev  whether or not to abbreviate the variable names

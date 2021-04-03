@@ -49,7 +49,7 @@ IG0.2 <- dIW(xseq, V = 1, nu = 0.2)
 ## end with point mass near V
 IG1 <- dIW(xseq, V = 1, nu = 1)
 plot(IG0.002, type = "n",
-  main = "Inverse Gamma\\nV = 1",
+  main = "Inverse Gamma\nV = 1",
   xlab = "Variance", ylab = "Density",
   xlim = c(0, max(xseq)),
   ylim = c(0, max(c(IG0.002$y, IG0.02$y, IG0.2$y, IG1$y))))
@@ -67,14 +67,14 @@ plot(IG0.002, type = "n",
 mar1 <- dIW(xseq, V = diag(2), nu = 1.002, marginal = TRUE)
 # compare to IG0.002 above
 plot(mar1, type = "n",
-  main = "Marginal prior for a variance:\\n IW(V = diag(2), nu = 1.002)",
+  main = "Marginal prior for a variance:\n IW(V = diag(2), nu = 1.002)",
   xlab = "Variance", ylab = "Density",
   xlim = c(0, max(xseq)), ylim = c(0, max(c(mar1$y, IG0.002$y))))
  lines(mar1, lwd = 2, col = "red")
  lines(IG0.002, lwd = 2, col = "black")
  legend("topright", col = c("red", "black"), lwd = 2,
 	legend = c("marginal prior",
-		"univariate prior\\nIG(V=1, nu=0.002)"),
+		"univariate prior\nIG(V=1, nu=0.002)"),
 	inset = 0.01)
 }
 \references{
@@ -84,7 +84,8 @@ Hadfield, J. 2015. MCMCglmm Course Notes. June 20, 2015.
 \code{\link[MCMCglmm]{MCMCglmm}}, \code{\link[MCMCglmm]{rIW}},
   \code{rpeIW}
 
-Other prior functions: \code{\link{rpeIW}}
+Other prior functions: 
+\code{\link{rpeIW}()}
 }
 \author{
 \email{matthewwolak@gmail.com}

@@ -38,8 +38,9 @@ ncol = 2))
 postTable(normMCMC)
 }
 \seealso{
-Other MCMC posterior distribution helper functions: \code{\link{plot2mcmc}},
-  \code{\link{postPlot}}
+Other MCMC posterior distribution helper functions: 
+\code{\link{plot2mcmc}()},
+\code{\link{postPlot}()}
 }
 \author{
 \email{matthewwolak@gmail.com}

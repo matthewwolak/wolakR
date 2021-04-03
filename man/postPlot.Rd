@@ -4,13 +4,36 @@
 \alias{postPlot}
 \title{Posterior distribution plot.}
 \usage{
-postPlot(posterior, bw = "nrd", plotHist = TRUE, histbreaks = 100,
-  histcol = NULL, prior = NULL, prange = c("prior", "posterior"),
-  main, sub, ylim, denslwd = 6, denslty = "solid", denscol = "black",
-  hpdlwd = 6, hpdlty = "dashed", hpdcol = "black", meanlwd = 7,
-  meanlty = "12", meancol = "red", priorlwd = 3,
-  priorlty = "solid", priorcol = "green", at1 = NULL, at2 = NULL,
-  labels1 = NULL, labels2 = NULL, plot = TRUE, ...)
+postPlot(
+  posterior,
+  bw = "nrd",
+  plotHist = TRUE,
+  histbreaks = 100,
+  histcol = NULL,
+  prior = NULL,
+  prange = c("prior", "posterior"),
+  main,
+  sub,
+  ylim,
+  denslwd = 6,
+  denslty = "solid",
+  denscol = "black",
+  hpdlwd = 6,
+  hpdlty = "dashed",
+  hpdcol = "black",
+  meanlwd = 7,
+  meanlty = "12",
+  meancol = "red",
+  priorlwd = 3,
+  priorlty = "solid",
+  priorcol = "green",
+  at1 = NULL,
+  at2 = NULL,
+  labels1 = NULL,
+  labels2 = NULL,
+  plot = TRUE,
+  ...
+)
 }
 \arguments{
 \item{posterior}{Object containing a marginal posterior distribution from
@@ -162,8 +185,9 @@ par(mfrow = c(2, 1))
 \seealso{
 \code{\link[coda]{densplot}}, \code{\link[graphics]{hist}}
 
-Other MCMC posterior distribution helper functions: \code{\link{plot2mcmc}},
-  \code{\link{postTable}}
+Other MCMC posterior distribution helper functions: 
+\code{\link{plot2mcmc}()},
+\code{\link{postTable}()}
 }
 \author{
 \email{matthewwolak@gmail.com}

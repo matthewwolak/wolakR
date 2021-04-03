@@ -42,7 +42,8 @@ sapply(1:5, FUN = function(i){matrix(peIW[i, ], 2, 2)}, simplify = "array")
 \seealso{
 \code{\link[MCMCglmm]{MCMCglmm}}, \code{\link[MCMCglmm]{rIW}}
 
-Other prior functions: \code{\link{dIW}}
+Other prior functions: 
+\code{\link{dIW}()}
 }
 \author{
 \email{matthewwolak@gmail.com}
