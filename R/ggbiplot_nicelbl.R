@@ -48,11 +48,13 @@
 #'   wine.pca <- prcomp(wine, scale. = TRUE)
 #'   print(ggbiplot(wine.pca, obs.scale = 1, var.scale = 1, groups = wine.class, ellipse = TRUE, circle = TRUE))
 #'
-ggbiplot_nicelbl <- function(pcobj, choices = 1:2, scale = 1, pc.biplot = TRUE, 
+ggbiplot_nolbl <- function(pcobj, choices = 1:2, scale = 1, pc.biplot = TRUE, 
                       obs.scale = 1 - scale, var.scale = scale, 
                       groups = NULL, ellipse = FALSE, ellipse.prob = 0.68, 
                       labels = NULL, labels.size = 3, alpha = 1, 
-                      var.axes = TRUE, 
+                      var.axes = TRUE,
+                      var.ax.col = NULL,   		      #<-- new argument
+                      var.ax.lbl = TRUE,   		      #<-- new argument
                       circle = FALSE, circle.prob = 0.69, 
                       varname.size = 3, varname.adjust = 1.5, 
                       varname.abbrev = FALSE, ...)
@@ -161,11 +163,12 @@ ggbiplot_nicelbl <- function(pcobj, choices = 1:2, scale = 1, pc.biplot = TRUE,
     }
 
     # Draw directions
+    if(is.null(var.ax.col)) var.ax.col <- 'red'
     g <- g +
       geom_segment(data = df.v,
                    aes(x = 0, y = 0, xend = xvar, yend = yvar),
                    arrow = arrow(length = unit(1/2, 'picas')), 
-                   color = muted('red'))
+                   color = muted(var.ax.col))
   }
 
   # Draw either labels or points
@@ -204,12 +207,12 @@ ggbiplot_nicelbl <- function(pcobj, choices = 1:2, scale = 1, pc.biplot = TRUE,
   }
 
   # Label the variable axes
-  if(var.axes) {
+  if(var.axes & var.ax.lbl) {
     g <- g + 
     geom_text(data = df.v, 
               aes(label = varname, x = xvar, y = yvar, 
                   angle = angle, hjust = hjust), 
-              color = 'darkred', size = varname.size)
+              color = var.ax.col, size = varname.size)
   }
   # Change the name of the legend for groups
   # if(!is.null(groups)) {
