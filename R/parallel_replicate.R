@@ -5,6 +5,7 @@
 #'
 #' @aliases preplicate
 #' @export
+#' @import parallel
 #' @param n integer: the number of replications.
 #' @param expr the expression (a language object, usually a call) to evaluate
 #'   repeatedly.

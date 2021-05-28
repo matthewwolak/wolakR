@@ -113,6 +113,8 @@ dIW <- function(x, V = 1, nu = 1, marginal = FALSE){
 #'
 #' @aliases rpeIW
 #' @export
+#' @importFrom MASS mvrnorm
+#' @importFrom MCMCglmm rIW
 #' @param n Integer of how many samples to generate.
 #' @param V Numeric matrix of the expected (co)variances
 #' @param nu Numeric for the degree of belief parameter for the inverse-

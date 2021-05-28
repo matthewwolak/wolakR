@@ -5,6 +5,8 @@
 #'
 #' @aliases postTable
 #' @export
+#' @importFrom coda HPDinterval
+#' @importFrom MCMCglmm posterior.mode
 #' @param mcpost Object of class \code{mcmc} containing marginal posterior
 #'   distributions.
 #' @param ind Column indices for the subset of \code{mcpost} for which the
@@ -81,6 +83,10 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #'
 #' @aliases postPlot
 #' @export
+#' @importFrom stats density
+#' @importFrom graphics hist lines
+#' @importFrom coda is.mcmc HPDinterval
+#'
 #' @param posterior Object containing a marginal posterior distribution from
 #'   from which kernel density estimates can be calulated by the
 #'   \code{coda::density} function.
@@ -448,6 +454,7 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
 #'	ncol = 2))
 #' plot2mcmc(normMCMC, normMCMC2)
 #' @export
+#' @importFrom coda set.mfrow nvar mcmc traceplot densplot
 plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
     oldpar <- NULL
     on.exit(par(oldpar))
