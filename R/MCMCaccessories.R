@@ -121,19 +121,24 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' @param ylim Y-axis limits to the plotting region, passed to
 #'   \code{\link[coda]{densplot}}. See \code{\link[graphics]{plot.window}}.
 #'
-#' @param denslwd,hpdlwd,meanlwd,priorlwd The line widths for the lines to be plotted
-#'   representing the kernel density estimate (\code{denslwd}), credible
-#'   interval limits (\code{hpdlwd}), or posterior mean (\code{meanlwd}). See
-#'   \code{\link[graphics]{par}} for details. 
-#' @param denslty,hpdlty,meanlty,priorlty The line type for the lines to be plotted
-#'   representing the kernel density estimate (\code{denslty}), credible
-#'   interval limits (\code{hpdlty}), or posterior mean (\code{meanlty}). See
-#'   \code{\link[graphics]{par}} for details. 
-#' @param denscol,hpdcol,meancol,priorcol,histcol The line colors for the lines
-#'   to be plotted representing the kernel density estimate (\code{denscol}),
-#'   credible interval limits (\code{hpdcol}), posterior mean (\code{meancol}),
-#'   prior density (\code{priorcol}), or histogram fill (\code{histcol}). See
-#'   \code{\link[graphics]{par}} for details.
+#' @param denslwd,priorlwd The line widths for the lines to be plotted
+#'   representing the kernel density estimate of the posterior (\code{denslwd})
+#'   or prior (\code{priorlwd}). See \code{\link[graphics]{par}} for details. 
+#' @param denslty,priorlty The line type for the lines to be plotted
+#'   representing the kernel density estimate of the posterior (\code{denslty}) 
+#'   or prior (\code{priorlty}). See \code{\link[graphics]{par}} for details. 
+#' @param denscol,hpdcol,meancol,modecol,priorcol,histcol The line colors for the
+#'   plotted features representing the kernel density estimate (\code{denscol}),
+#'   credible interval (\code{hpdcol}), posterior mean (\code{meancol}), posterior
+#'   mode (\code{modecol}), prior density (\code{priorcol}), or histogram fill
+#'   (\code{histcol}). See \code{\link[graphics]{par}} for details.
+#' @param meanpch,modepch The point symbol to use for plotting the posterior
+#'   mean (\code{meanpch}) and mode (\code{modepch}). See
+#'   \code{\link[graphics]{points}} for details.
+#' @param meanbg,modebf The background color for plotting symbols used for
+#'   the posterior mean (\code{meanbg}) and mode (\code{modebg}). Only used if
+#'   values for \code{meanpch} and \code{modepch} allow background colors. See
+#'   \code{\link[graphics]{points}} for details.
 #' @param at1,at2 The points at which tick-marks are to be drawn on the
 #'   x-axis (\code{at1}) and y-axis (\code{at2}). See
 #'   \code{\link[graphics]{axis}} for details.
@@ -190,8 +195,9 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
 	prior = NULL, prange = c("prior", "posterior"),
 	main, sub, ylim,
 	denslwd = 6, denslty = "solid", denscol = "black",
-	hpdlwd = 6, hpdlty = "dashed", hpdcol = "black",
-	meanlwd = 7, meanlty = "12", meancol = "red",
+	hpdcol = "grey70",
+        meanpch = 23, meanbg = "white", meancol = "red",
+	modepch = 3, modebg = NA, modecol = "blue",
 	priorlwd = 3, priorlty = "solid", priorcol = "green",
 	at1 = NULL, at2 = NULL,
 	labels1 = NULL, labels2 = NULL,
@@ -263,6 +269,9 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
   }
 
   if(plot){
+    # set axis label off a little
+    ## do before place actual axis
+    par(mgp = par("mgp") + c(1, 0, 0))
     plot(poDens, type = "n", axes = FALSE,
 	main = main.title, sub = sub.title, ylim = ylimit, ...)
     if(plotHist) graphics::hist(posterior, breaks = histbreaks, col = histcol,
@@ -271,13 +280,32 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
     graphics::lines(poDens, lwd = denslwd, col = denscol, ...)
     yaxmax <- ifelse(is.null(at2), par("yaxp")[2], max(at2))
     lineylim <- ifelse(yaxmax >= maxYhistpoDens, yaxmax, maxYhistpoDens)
-    nout <- sapply(coda::HPDinterval(posterior), FUN = function(x){(
-	graphics::lines(x = rep(x, 2), y = c(ylimit[1], lineylim),
-	  lty = hpdlty, lwd = hpdlwd, col = hpdcol, ...)
-      )})
-    graphics::lines(x = rep(mean(posterior), 2), y = c(ylimit[1], lineylim),
-	col = meancol, lty = meanlty, lwd = meanlwd, ...)
-    axis(1, at = at1, labels = labels1)
+    porange <- range(posterior)
+    hpd <- coda::HPDinterval(posterior)
+    pomean <- mean(posterior)
+    pomode <- MCMCglmm::posterior.mode(posterior)
+    
+    # plot range of all samples 
+    axis(1, at = porange, labels = FALSE, tcl = 0, lwd = 2.5, lend = "square",
+      line = 0.25)
+    # Plot HPD credible interval
+    axis(1, at = hpd, labels = FALSE, tcl = 0, col = hpdcol,
+      lwd = 10, lend = "square", line = 0.25)
+    # Plot mean and median
+    ## get the y-coordinates for axis lines
+     axisLine0Y <- graphics::grconvertY(graphics::grconvertY(0, from = "npc",
+        to = "lines") - 0.25,
+      from = "lines", to = "user")
+    xpd_old <- par("xpd")    #<-- capture old xpd value
+    par(xpd = TRUE)
+    ## POINTS
+    graphics::points(x = c(pomean, pomode), y = rep(axisLine0Y, 2),
+      pch = c(meanpch, modepch),
+      bg = c(meanbg, modebg), col = c(meancol, modecol),
+      cex = 1.75, lwd = 3) 
+    par(xpd = xpd_old)   #<-- reset xpd
+
+    axis(1, at = at1, labels = labels1, line = par("mgp")[3] + 1)
     axis(2, at = at2, labels = labels2)
   }
 
@@ -402,11 +430,6 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
 	)))
 	
 }
-
-
-
-
-
 
 
 
