@@ -477,7 +477,7 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
 #'	ncol = 2))
 #' plot2mcmc(normMCMC, normMCMC2)
 #' @export
-#' @importFrom coda set.mfrow nvar mcmc traceplot densplot
+#' @importFrom coda nvar mcmc traceplot densplot
 plot2mcmc <- function(x1, x2 = NULL, smooth = FALSE, bwf, save = FALSE, ...){
     oldpar <- NULL
     on.exit(par(oldpar))
