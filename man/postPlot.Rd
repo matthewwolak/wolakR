@@ -18,12 +18,13 @@ postPlot(
   denslwd = 6,
   denslty = "solid",
   denscol = "black",
-  hpdlwd = 6,
-  hpdlty = "dashed",
-  hpdcol = "black",
-  meanlwd = 7,
-  meanlty = "12",
+  hpdcol = "grey70",
+  meanpch = 23,
+  meanbg = "white",
   meancol = "red",
+  modepch = 3,
+  modebg = NA,
+  modecol = "blue",
   priorlwd = 3,
   priorlty = "solid",
   priorcol = "green",
@@ -75,21 +76,28 @@ adjustment currently only works when class \code{mcmc} provided to
 \item{ylim}{Y-axis limits to the plotting region, passed to
 \code{\link[coda]{densplot}}. See \code{\link[graphics]{plot.window}}.}
 
-\item{denslwd, hpdlwd, meanlwd, priorlwd}{The line widths for the lines to be plotted
-representing the kernel density estimate (\code{denslwd}), credible
-interval limits (\code{hpdlwd}), or posterior mean (\code{meanlwd}). See
-\code{\link[graphics]{par}} for details.}
+\item{denslwd, priorlwd}{The line widths for the lines to be plotted
+representing the kernel density estimate of the posterior (\code{denslwd})
+or prior (\code{priorlwd}). See \code{\link[graphics]{par}} for details.}
 
-\item{denslty, hpdlty, meanlty, priorlty}{The line type for the lines to be plotted
-representing the kernel density estimate (\code{denslty}), credible
-interval limits (\code{hpdlty}), or posterior mean (\code{meanlty}). See
-\code{\link[graphics]{par}} for details.}
+\item{denslty, priorlty}{The line type for the lines to be plotted
+representing the kernel density estimate of the posterior (\code{denslty}) 
+or prior (\code{priorlty}). See \code{\link[graphics]{par}} for details.}
 
-\item{denscol, hpdcol, meancol, priorcol, histcol}{The line colors for the lines
-to be plotted representing the kernel density estimate (\code{denscol}),
-credible interval limits (\code{hpdcol}), posterior mean (\code{meancol}),
-prior density (\code{priorcol}), or histogram fill (\code{histcol}). See
-\code{\link[graphics]{par}} for details.}
+\item{denscol, hpdcol, meancol, modecol, priorcol, histcol}{The line colors for the
+plotted features representing the kernel density estimate (\code{denscol}),
+credible interval (\code{hpdcol}), posterior mean (\code{meancol}), posterior
+mode (\code{modecol}), prior density (\code{priorcol}), or histogram fill
+(\code{histcol}). See \code{\link[graphics]{par}} for details.}
+
+\item{meanpch, modepch}{The point symbol to use for plotting the posterior
+mean (\code{meanpch}) and mode (\code{modepch}). See
+\code{\link[graphics]{points}} for details.}
+
+\item{meanbg, modebf}{The background color for plotting symbols used for
+the posterior mean (\code{meanbg}) and mode (\code{modebg}). Only used if
+values for \code{meanpch} and \code{modepch} allow background colors. See
+\code{\link[graphics]{points}} for details.}
 
 \item{at1, at2}{The points at which tick-marks are to be drawn on the
 x-axis (\code{at1}) and y-axis (\code{at2}). See
