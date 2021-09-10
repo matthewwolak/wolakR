@@ -84,7 +84,7 @@ postTable <- function(mcpost, ind = NULL, sigdig = 3, ...){
 #' @aliases postPlot
 #' @export
 #' @importFrom stats density
-#' @importFrom graphics hist lines
+#' @importFrom graphics hist lines points grconvertY rect
 #' @importFrom coda is.mcmc HPDinterval
 #'
 #' @param posterior Object containing a marginal posterior distribution from
