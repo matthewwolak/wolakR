@@ -288,16 +288,17 @@ postPlot <- function(posterior, bw = "nrd", #TODO make separate prior/posterior 
     # plot range of all samples 
     axis(1, at = porange, labels = FALSE, tcl = 0, lwd = 2.5, lend = "square",
       line = 0.25)
-    # Plot HPD credible interval
-    axis(1, at = hpd, labels = FALSE, tcl = 0, col = hpdcol,
-      lwd = 10, lend = "square", line = 0.25)
-    # Plot mean and median
+    # Plot HPD, mean, and median
     ## get the y-coordinates for axis lines
      axisLine0Y <- graphics::grconvertY(graphics::grconvertY(0, from = "npc",
         to = "lines") - 0.25,
       from = "lines", to = "user")
     xpd_old <- par("xpd")    #<-- capture old xpd value
     par(xpd = TRUE)
+    # Plot HPD credible interval
+    graphics::rect(xleft = hpd[1], ybottom = axisLine0Y - 0.06,
+      xright = hpd[2], ytop = axisLine0Y + 0.06,
+      col = hpdcol, lwd = 0.001)
     ## POINTS
     graphics::points(x = c(pomean, pomode), y = rep(axisLine0Y, 2),
       pch = c(meanpch, modepch),
