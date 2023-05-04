@@ -60,6 +60,6 @@ wolak_palette <- function(name = "aucfriend", n,
 #' @method plot palette
 plot.palette <- function(pal, ...){
   n <- length(pal)
-  barplot(rep(10, n), col = pal, axes = FALSE)
-    axis(1, at = seq.int(n), labels = names(pal))   	
+  bplotOut <- barplot(rep(10, n), col = pal, axes = FALSE)
+    axis(1, at = bplotOut, labels = names(pal), lty = "blank")   	
 }
