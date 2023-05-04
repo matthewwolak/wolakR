@@ -50,7 +50,7 @@ wolak_palette <- function(name = "aucfriend", n,
     discrete = pal[1:n],
     continuous = grDevices::colorRampPalette(pal)(n))
   
- structure(pout, class = "palette", pal_name = pal_name)
+ structure(pout, class = "palette", pal_name = name)
 }
 
 
