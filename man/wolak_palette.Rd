@@ -26,5 +26,12 @@ Sets up the R object of class palette that contains one of the pre-specified
 Function is based off the \code{wesanderson::wes_palette} function.
 }
 \examples{
-wolak_palette("aucfriend")
+clr <- wolak_palette("aucfriend")
+\dontrun{
+  # check:
+    colorblindcheck::palette_check(clr, plot = TRUE)
+}
+}
+\author{
+\email{matthewwolak@gmail.com}
 }

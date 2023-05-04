@@ -13,4 +13,12 @@ wolak_palettes
 \description{
 Run the function \code{\link{wolak_palette}} to create the palette objects.
 }
+\details{
+\dQuote{aucfriend} is a color palette that is accessible across all types of
+  color vision and was checked with the package \code{colorblindcheck} that
+  implements a model of human color vision.
+}
+\author{
+\email{matthewwolak@gmail.com}
+}
 \keyword{datasets}

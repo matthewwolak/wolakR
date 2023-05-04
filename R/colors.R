@@ -2,6 +2,10 @@
 #'
 #' Run the function \code{\link{wolak_palette}} to create the palette objects.
 #'
+#' \dQuote{aucfriend} is a color palette that is accessible across all types of
+#'   color vision and was checked with the package \code{colorblindcheck} that
+#'   implements a model of human color vision.
+#' @author \email{matthewwolak@@gmail.com}
 #' @export
 wolak_palettes <- list(
   aucfriend = c(blue = "#03244d", cyan = "#00A08A", orange = "#e86823")
@@ -21,9 +25,14 @@ wolak_palettes <- list(
 #'   listed in the paletter or \dQuote{continuous} to interpolate between colors.
 #'
 #' @return A vector of colors of the class \dQuote{palette}.
+#' @author \email{matthewwolak@@gmail.com}
 #' @export
 #' @examples
-#' wolak_palette("aucfriend")
+#' clr <- wolak_palette("aucfriend")
+#' \dontrun{
+#'   # check:
+#'     colorblindcheck::palette_check(clr, plot = TRUE)
+#' }
 wolak_palette <- function(name = "aucfriend", n,
 	type = c("discrete", "continuous")){
   type <- match.arg(type)
@@ -43,4 +52,14 @@ wolak_palette <- function(name = "aucfriend", n,
   
  structure(pout, class = "palette", name = name)
 }
-  	
+
+
+#' @author \email{matthewwolak@@gmail.com}
+#' @seealso \code{\link{wolak_palette}}
+#' @export
+#' @method plot palette
+plot.palette <- function(pal, ...){
+  n <- length(pal)
+  barplot(rep(10, n), col = pal, axes = FALSE)
+    axis(1, at = seq.int(n), labels = names(pal))   	
+}
