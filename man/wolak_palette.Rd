@@ -16,7 +16,7 @@ wolak_palette(name = "aucfriend", n, type = c("discrete", "continuous"))
 listed in the paletter or \dQuote{continuous} to interpolate between colors.}
 }
 \value{
-A vector of colors of the class \dQuote{palette}.
+A vector of colors of the class \dQuote{palette} with a palette name.
 }
 \description{
 Sets up the R object of class palette that contains one of the pre-specified

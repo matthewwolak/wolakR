@@ -24,7 +24,7 @@ wolak_palettes <- list(
 #' @param type Character indicating either \dQuote{discrete} for colors already
 #'   listed in the paletter or \dQuote{continuous} to interpolate between colors.
 #'
-#' @return A vector of colors of the class \dQuote{palette}.
+#' @return A vector of colors of the class \dQuote{palette} with a palette name.
 #' @author \email{matthewwolak@@gmail.com}
 #' @export
 #' @examples
@@ -50,7 +50,7 @@ wolak_palette <- function(name = "aucfriend", n,
     discrete = pal[1:n],
     continuous = grDevices::colorRampPalette(pal)(n))
   
- structure(pout, class = "palette", name = name)
+ structure(pout, class = "palette", pal_name = pal_name)
 }
 
 
@@ -60,6 +60,8 @@ wolak_palette <- function(name = "aucfriend", n,
 #' @method plot palette
 plot.palette <- function(pal, ...){
   n <- length(pal)
-  bplotOut <- barplot(rep(10, n), col = pal, axes = FALSE)
+  pal_name <- attr(pal, "pal_name")
+   
+  bplotOut <- barplot(rep(10, n), col = pal, main = pal_name, axes = FALSE)
     axis(1, at = bplotOut, labels = names(pal), lty = "blank")   	
 }
